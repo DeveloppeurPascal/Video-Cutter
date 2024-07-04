@@ -1,0 +1,308 @@
+object frmMain: TfrmMain
+  Left = 0
+  Top = 0
+  Caption = 'Form1'
+  ClientHeight = 480
+  ClientWidth = 772
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnCreate = FormCreate
+  OnCloseQuery = FormCloseQuery
+  DesignerMasterStyle = 0
+  object StatusBar1: TStatusBar
+    Position.Y = 458.000000000000000000
+    ShowSizeGrip = True
+    Size.Width = 772.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 2
+    object Label1: TLabel
+      Align = Left
+      Margins.Left = 5.000000000000000000
+      Margins.Right = 5.000000000000000000
+      Position.X = 5.000000000000000000
+      Size.Width = 120.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'Label1'
+      TabOrder = 0
+    end
+  end
+  object ToolBar1: TToolBar
+    Size.Width = 772.000000000000000000
+    Size.Height = 40.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 3
+    object btnProjectOpen: TButton
+      Action = actProjectOpen
+      Align = MostLeft
+      ImageIndex = -1
+      Margins.Left = 5.000000000000000000
+      Margins.Top = 5.000000000000000000
+      Margins.Right = 5.000000000000000000
+      Margins.Bottom = 5.000000000000000000
+      Position.X = 5.000000000000000000
+      Position.Y = 5.000000000000000000
+      Size.Width = 80.000000000000000000
+      Size.Height = 30.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 1
+      TextSettings.Trimming = None
+    end
+    object btnProjectClose: TButton
+      Action = actProjectClose
+      Align = MostLeft
+      ImageIndex = -1
+      Margins.Left = 5.000000000000000000
+      Margins.Top = 5.000000000000000000
+      Margins.Right = 5.000000000000000000
+      Margins.Bottom = 5.000000000000000000
+      Position.X = 185.000000000000000000
+      Position.Y = 5.000000000000000000
+      Size.Width = 80.000000000000000000
+      Size.Height = 30.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 2
+      TextSettings.Trimming = None
+    end
+    object btnProjectOptions: TButton
+      Action = actProjectOptions
+      Align = Left
+      ImageIndex = -1
+      Margins.Left = 5.000000000000000000
+      Margins.Top = 5.000000000000000000
+      Margins.Right = 5.000000000000000000
+      Margins.Bottom = 5.000000000000000000
+      Position.X = 275.000000000000000000
+      Position.Y = 5.000000000000000000
+      Size.Width = 80.000000000000000000
+      Size.Height = 30.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 3
+      TextSettings.Trimming = None
+    end
+    object btnToolsOptions: TButton
+      Action = actOptions
+      Align = Right
+      ImageIndex = -1
+      Margins.Left = 5.000000000000000000
+      Margins.Top = 5.000000000000000000
+      Margins.Right = 5.000000000000000000
+      Margins.Bottom = 5.000000000000000000
+      Position.X = 507.000000000000000000
+      Position.Y = 5.000000000000000000
+      Size.Width = 80.000000000000000000
+      Size.Height = 30.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 5
+      TextSettings.Trimming = None
+    end
+    object btnQuit: TButton
+      Action = actQuit
+      Align = MostRight
+      ImageIndex = -1
+      Margins.Left = 5.000000000000000000
+      Margins.Top = 5.000000000000000000
+      Margins.Right = 5.000000000000000000
+      Margins.Bottom = 5.000000000000000000
+      Position.X = 687.000000000000000000
+      Position.Y = 5.000000000000000000
+      Size.Width = 80.000000000000000000
+      Size.Height = 30.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 6
+      TextSettings.Trimming = None
+    end
+    object btnAbout: TButton
+      Action = actAbout
+      Align = MostRight
+      ImageIndex = -1
+      Margins.Left = 5.000000000000000000
+      Margins.Top = 5.000000000000000000
+      Margins.Right = 5.000000000000000000
+      Margins.Bottom = 5.000000000000000000
+      Position.X = 597.000000000000000000
+      Position.Y = 5.000000000000000000
+      Size.Width = 80.000000000000000000
+      Size.Height = 30.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 4
+      TextSettings.Trimming = None
+    end
+    object btnProjectNew: TButton
+      Action = actProjectNew
+      Align = MostLeft
+      ImageIndex = -1
+      Margins.Left = 5.000000000000000000
+      Margins.Top = 5.000000000000000000
+      Margins.Right = 5.000000000000000000
+      Margins.Bottom = 5.000000000000000000
+      Position.X = 95.000000000000000000
+      Position.Y = 5.000000000000000000
+      Size.Width = 80.000000000000000000
+      Size.Height = 30.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      TextSettings.Trimming = None
+    end
+  end
+  object VertScrollBox1: TVertScrollBox
+    Align = Client
+    Size.Width = 772.000000000000000000
+    Size.Height = 145.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 5
+    Viewport.Width = 772.000000000000000000
+    Viewport.Height = 145.000000000000000000
+  end
+  object MediaPlayerControl1: TMediaPlayerControl
+    Size.Width = 772.000000000000000000
+    Size.Height = 273.000000000000000000
+    Size.PlatformDefault = False
+    Align = Top
+    MediaPlayer = MediaPlayer1
+    Position.Y = 40.000000000000000000
+  end
+  object MainMenu1: TMainMenu
+    Left = 56
+    Top = 112
+    object mnuMacOS: TMenuItem
+      Text = 'mnuMacOS'
+    end
+    object mnuFile: TMenuItem
+      Text = '&File'
+      object mnuFileNew: TMenuItem
+        Action = actProjectNew
+        Locked = True
+        ImageIndex = -1
+      end
+      object mnuFileOpen: TMenuItem
+        Action = actProjectOpen
+        Locked = True
+        ImageIndex = -1
+      end
+      object mnuFileSave: TMenuItem
+        Action = actProjectSave
+        Locked = True
+        ImageIndex = -1
+      end
+      object mnuFileClose: TMenuItem
+        Action = actProjectClose
+        Locked = True
+        ImageIndex = -1
+      end
+      object mnuFileQuit: TMenuItem
+        Action = actQuit
+        Locked = True
+        ImageIndex = -1
+      end
+    end
+    object mnuProject: TMenuItem
+      Text = '&Project'
+      object mnuProjectOptions: TMenuItem
+        Action = actProjectOptions
+        Locked = True
+        ImageIndex = -1
+      end
+    end
+    object mnuTools: TMenuItem
+      Text = '&Tools'
+      object mnuToolsOptions: TMenuItem
+        Action = actOptions
+        Locked = True
+        ImageIndex = -1
+      end
+    end
+    object mnuHelp: TMenuItem
+      Text = '&Help'
+      object mnuHelpAbout: TMenuItem
+        Action = actAbout
+        Locked = True
+        ImageIndex = -1
+      end
+    end
+  end
+  object OlfAboutDialog1: TOlfAboutDialog
+    Titre = 'Video Cutter'
+    VersionNumero = '0.0'
+    VersionDate = '20240704'
+    MultiResBitmap = <
+      item
+      end>
+    Images = dmLogo.imgLogo
+    ImageIndex = 0
+    URL = 'https://videocutter.olfsoftware.fr'
+    onURLClick = OlfAboutDialog1URLClick
+    Left = 56
+    Top = 200
+  end
+  object ActionList1: TActionList
+    Left = 56
+    Top = 280
+    object actQuit: TAction
+      Text = '&Quit'
+      OnExecute = actQuitExecute
+    end
+    object actProjectOpen: TAction
+      Text = '&Open'
+      OnExecute = actProjectOpenExecute
+    end
+    object actProjectNew: TAction
+      Text = '&New'
+      OnExecute = actProjectNewExecute
+    end
+    object actProjectSave: TAction
+      Text = '&Save'
+      OnExecute = actProjectSaveExecute
+    end
+    object actProjectClose: TAction
+      Text = '&Close'
+      OnExecute = actProjectCloseExecute
+    end
+    object actProjectOptions: TAction
+      Text = '&Options'
+      OnExecute = actProjectOptionsExecute
+    end
+    object actAbout: TAction
+      Text = '&About'
+      OnExecute = actAboutExecute
+    end
+    object actOptions: TAction
+      Text = '&Options'
+      OnExecute = actOptionsExecute
+    end
+  end
+  object MediaPlayer1: TMediaPlayer
+    Left = 56
+    Top = 344
+  end
+  object odVICUProject: TOpenDialog
+    DefaultExt = 'vicu'
+    Filter = 'Video Cutter Project (*.vicu)|*.vicu'
+    Options = [ofHideReadOnly, ofPathMustExist, ofFileMustExist, ofEnableSizing]
+    Left = 520
+    Top = 80
+  end
+  object scExportedVideo: TSaveDialog
+    DefaultExt = 'mp4'
+    Filter = 'Video MP4 (*.mp4)|*.mp4'
+    Options = [ofOverwritePrompt, ofHideReadOnly, ofPathMustExist, ofEnableSizing]
+    Left = 624
+    Top = 152
+  end
+  object svVICUProject: TSaveDialog
+    DefaultExt = 'vicu'
+    Filter = 'Video Cutter Project (*.vicu)|*.vicu'
+    Options = [ofOverwritePrompt, ofHideReadOnly, ofPathMustExist, ofEnableSizing]
+    Left = 520
+    Top = 152
+  end
+  object odVideoFile: TOpenDialog
+    DefaultExt = 'mp4'
+    Filter = 'Video MP4 (*.mp4)|*.mp4'
+    Options = [ofHideReadOnly, ofPathMustExist, ofFileMustExist, ofEnableSizing]
+    Left = 624
+    Top = 80
+  end
+end
