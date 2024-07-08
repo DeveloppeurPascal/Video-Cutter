@@ -224,7 +224,19 @@ end;
 
 procedure TfrmMain.actProjectSaveExecute(Sender: TObject);
 begin
-  // TODO : à compléter
+  if not assigned(CurrentProject) then
+    exit;
+
+  if not CurrentProject.FilePath.IsEmpty then
+    CurrentProject.SaveToFile
+  else
+  begin
+    if svVICUProject.InitialDir.IsEmpty then
+      svVICUProject.InitialDir := TPath.GetMoviesPath;
+
+    if svVICUProject.Execute and (svVICUProject.FileName <> '') then
+      CurrentProject.SaveToFile(svVICUProject.FileName);
+  end;
 end;
 
 procedure TfrmMain.actQuitExecute(Sender: TObject);
