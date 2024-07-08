@@ -563,19 +563,16 @@ end;
 
 procedure TVICUProject.SaveToFile(const AFilePath: string);
 var
-  FilePath: string;
   fs: TFileStream;
 begin
-  if AFilePath.isempty then
-    FilePath := FFilePath
-  else
-    FilePath := AFilePath;
+  if not AFilePath.isempty then
+    FFilePath := AFilePath;
 
-  if FilePath.isempty then
+  if FFilePath.isempty then
     raise exception.Create
       ('No filename, where do you want to save your project ?');
 
-  fs := TFileStream.Create(FilePath, fmOpenWrite + fmCreate);
+  fs := TFileStream.Create(FFilePath, fmOpenWrite + fmCreate);
   try
     SaveToStream(fs);
   finally
