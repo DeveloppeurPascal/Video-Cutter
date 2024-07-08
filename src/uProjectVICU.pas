@@ -510,21 +510,18 @@ end;
 
 procedure TVICUProject.LoadFromFile(const AFilePath: string);
 var
-  FilePath: string;
   fs: TFileStream;
 begin
-  if AFilePath.isempty then
-    FilePath := FFilePath
-  else
-    FilePath := AFilePath;
+  if not AFilePath.isempty then
+    FFilePath := AFilePath;
 
-  if FilePath.isempty then
+  if FFilePath.isempty then
     raise exception.Create('No filename, what do you want to load ?');
 
-  if not tfile.Exists(FilePath) then
+  if not tfile.Exists(FFilePath) then
     raise exception.Create('This file doesn''t exist !');
 
-  fs := TFileStream.Create(FilePath, fmOpenRead);
+  fs := TFileStream.Create(FFilePath, fmOpenRead);
   try
     LoadFromStream(fs);
   finally
