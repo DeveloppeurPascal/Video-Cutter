@@ -17,7 +17,7 @@ object frmMain: TfrmMain
     Size.Height = 22.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 2
-    object Label1: TLabel
+    object lblStatus: TLabel
       Align = Left
       Margins.Left = 5.000000000000000000
       Margins.Right = 5.000000000000000000
@@ -25,7 +25,7 @@ object frmMain: TfrmMain
       Size.Width = 120.000000000000000000
       Size.Height = 22.000000000000000000
       Size.PlatformDefault = False
-      Text = 'Label1'
+      Text = 'lblStatus'
       TabOrder = 0
     end
   end
@@ -147,23 +147,6 @@ object frmMain: TfrmMain
       TextSettings.Trimming = None
     end
   end
-  object VertScrollBox1: TVertScrollBox
-    Align = Client
-    Size.Width = 772.000000000000000000
-    Size.Height = 145.000000000000000000
-    Size.PlatformDefault = False
-    TabOrder = 5
-    Viewport.Width = 772.000000000000000000
-    Viewport.Height = 145.000000000000000000
-  end
-  object MediaPlayerControl1: TMediaPlayerControl
-    Size.Width = 772.000000000000000000
-    Size.Height = 273.000000000000000000
-    Size.PlatformDefault = False
-    Align = Top
-    MediaPlayer = MediaPlayer1
-    Position.Y = 40.000000000000000000
-  end
   object MainMenu1: TMainMenu
     Left = 56
     Top = 112
@@ -237,6 +220,347 @@ object frmMain: TfrmMain
     Left = 56
     Top = 200
   end
+  object MediaPlayer1: TMediaPlayer
+    Left = 56
+    Top = 344
+  end
+  object odVICUProject: TOpenDialog
+    DefaultExt = 'vicu'
+    Filter = 'Video Cutter Project (*.vicu)|*.vicu'
+    Options = [ofHideReadOnly, ofPathMustExist, ofFileMustExist, ofEnableSizing]
+    Left = 520
+    Top = 80
+  end
+  object scExportedVideo: TSaveDialog
+    DefaultExt = 'mp4'
+    Filter = 'Video MP4 (*.mp4)|*.mp4'
+    Options = [ofOverwritePrompt, ofHideReadOnly, ofPathMustExist, ofEnableSizing]
+    Left = 624
+    Top = 152
+  end
+  object svVICUProject: TSaveDialog
+    DefaultExt = 'vicu'
+    Filter = 'Video Cutter Project (*.vicu)|*.vicu'
+    Options = [ofOverwritePrompt, ofHideReadOnly, ofPathMustExist, ofEnableSizing]
+    Left = 520
+    Top = 152
+  end
+  object odVideoFile: TOpenDialog
+    DefaultExt = 'mp4'
+    Filter = 'Video MP4 (*.mp4)|*.mp4'
+    Options = [ofHideReadOnly, ofPathMustExist, ofFileMustExist, ofEnableSizing]
+    Left = 624
+    Top = 80
+  end
+  object lProject: TLayout
+    Align = Client
+    Size.Width = 772.000000000000000000
+    Size.Height = 418.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 13
+    object FlowLayout1: TFlowLayout
+      Align = MostBottom
+      Position.Y = 368.000000000000000000
+      Size.Width = 772.000000000000000000
+      Size.Height = 50.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 2
+      Justify = Center
+      JustifyLastLine = Center
+      FlowDirection = LeftToRight
+      object btnGotoStart: TButton
+        Margins.Left = 5.000000000000000000
+        Margins.Top = 5.000000000000000000
+        Margins.Right = 5.000000000000000000
+        Margins.Bottom = 5.000000000000000000
+        Position.X = 216.000000000000000000
+        Position.Y = 5.000000000000000000
+        Size.Width = 40.000000000000000000
+        Size.Height = 40.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 9
+        TextSettings.Trimming = None
+        OnClick = btnGotoStartClick
+        object pGotoStart: TPath
+          Align = Client
+          Data.Path = {
+            0A000000000000000000C04000009041010000000000C0400000C04001000000
+            000000410000C040010000000000004100009041010000000000C04000009041
+            00000000000018410000404101000000000090410000C0400100000000009041
+            00009041010000000000184100004041030000000000184100004041}
+          HitTest = False
+          Margins.Left = 5.000000000000000000
+          Margins.Top = 5.000000000000000000
+          Margins.Right = 5.000000000000000000
+          Margins.Bottom = 5.000000000000000000
+          Size.Width = 30.000000000000000000
+          Size.Height = 30.000000000000000000
+          Size.PlatformDefault = False
+          Stroke.Kind = None
+          WrapMode = Fit
+        end
+      end
+      object btnPrevSeconde: TButton
+        Margins.Left = 5.000000000000000000
+        Margins.Top = 5.000000000000000000
+        Margins.Right = 5.000000000000000000
+        Margins.Bottom = 5.000000000000000000
+        Position.X = 266.000000000000000000
+        Position.Y = 5.000000000000000000
+        Size.Width = 40.000000000000000000
+        Size.Height = 40.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 8
+        TextSettings.Trimming = None
+        OnClick = btnPrevSecondeClick
+        object pPrevSeconde: TPath
+          Align = Client
+          Data.Path = {
+            0F00000000000000AE479341B81EED4001000000000088410000C04001000000
+            000030410000404101000000000088410000904101000000AE47934152B88441
+            01000000AE475D410000404101000000AE479341B81EED40000000005C8F4641
+            B81EED4001000000000030410000C040010000000000A0400000404101000000
+            0000304100009041010000005C8F464152B88441010000005C8FFA4000004041
+            010000005C8F4641B81EED40030000005C8F4641B81EED40}
+          HitTest = False
+          Margins.Left = 5.000000000000000000
+          Margins.Top = 5.000000000000000000
+          Margins.Right = 5.000000000000000000
+          Margins.Bottom = 5.000000000000000000
+          Size.Width = 30.000000000000000000
+          Size.Height = 30.000000000000000000
+          Size.PlatformDefault = False
+          Stroke.Kind = None
+          WrapMode = Fit
+        end
+      end
+      object btnPrevFrame: TButton
+        Margins.Left = 5.000000000000000000
+        Margins.Top = 5.000000000000000000
+        Margins.Right = 5.000000000000000000
+        Margins.Bottom = 5.000000000000000000
+        Position.X = 316.000000000000000000
+        Position.Y = 5.000000000000000000
+        Size.Width = 40.000000000000000000
+        Size.Height = 40.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 7
+        TextSettings.Trimming = None
+        OnClick = btnPrevFrameClick
+        object pPrevFrame: TPath
+          Align = Client
+          Data.Path = {
+            160000000000000052B81641B81EED40010000005C8F9A400000404101000000
+            52B8164152B88441010000000000004100009041010000000000004000004041
+            01000000000000410000C0400100000052B81641B81EED400000000052B87641
+            B81EED4001000000AE472D41000040410100000052B8764152B8844101000000
+            000060410000904101000000000000410000404101000000000060410000C040
+            0100000052B87641B81EED4000000000295CAB41B81EED4001000000D7A38641
+            0000404101000000295CAB4152B88441010000000000A0410000904101000000
+            0000604100004041010000000000A0410000C04001000000295CAB41B81EED40
+            03000000295CAB41B81EED40}
+          HitTest = False
+          Margins.Left = 5.000000000000000000
+          Margins.Top = 5.000000000000000000
+          Margins.Right = 5.000000000000000000
+          Margins.Bottom = 5.000000000000000000
+          Size.Width = 30.000000000000000000
+          Size.Height = 30.000000000000000000
+          Size.PlatformDefault = False
+          Stroke.Kind = None
+          WrapMode = Fit
+        end
+      end
+      object btnPlayPause: TButton
+        Margins.Left = 5.000000000000000000
+        Margins.Top = 5.000000000000000000
+        Margins.Right = 5.000000000000000000
+        Margins.Bottom = 5.000000000000000000
+        Position.X = 366.000000000000000000
+        Position.Y = 5.000000000000000000
+        Size.Width = 40.000000000000000000
+        Size.Height = 40.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 6
+        TextSettings.Trimming = None
+        OnClick = btnPlayPauseClick
+        object pPlay: TPath
+          Align = Client
+          Data.Path = {
+            050000000000000000000041E17AA4400100000000000041B81E994101000000
+            00009841713D42410100000000000041E17AA4400300000000000041E17AA440}
+          HitTest = False
+          Margins.Left = 5.000000000000000000
+          Margins.Top = 5.000000000000000000
+          Margins.Right = 5.000000000000000000
+          Margins.Bottom = 5.000000000000000000
+          Size.Width = 30.000000000000000000
+          Size.Height = 30.000000000000000000
+          Size.PlatformDefault = False
+          Stroke.Kind = None
+          WrapMode = Fit
+        end
+        object pPause: TPath
+          Align = Client
+          Data.Path = {
+            0A00000000000000000060410000984101000000000090410000984101000000
+            000090410000A04001000000000060410000A040000000000000C04000009841
+            01000000000020410000984101000000000020410000A040010000000000C040
+            0000A040010000000000C04000009841030000000000C04000009841}
+          HitTest = False
+          Margins.Left = 5.000000000000000000
+          Margins.Top = 5.000000000000000000
+          Margins.Right = 5.000000000000000000
+          Margins.Bottom = 5.000000000000000000
+          Size.Width = 30.000000000000000000
+          Size.Height = 30.000000000000000000
+          Size.PlatformDefault = False
+          Stroke.Kind = None
+          WrapMode = Fit
+        end
+      end
+      object btnNextFrame: TButton
+        Margins.Left = 5.000000000000000000
+        Margins.Top = 5.000000000000000000
+        Margins.Right = 5.000000000000000000
+        Margins.Bottom = 5.000000000000000000
+        Position.X = 416.000000000000000000
+        Position.Y = 5.000000000000000000
+        Size.Width = 40.000000000000000000
+        Size.Height = 40.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 5
+        TextSettings.Trimming = None
+        OnClick = btnNextFrameClick
+        object pNextFrame: TPath
+          Align = Client
+          Data.Path = {
+            1600000000000000AE47694152B8844101000000295C99410000404101000000
+            AE476941B81EED4001000000000080410000C040010000000000B04100004041
+            01000000000080410000904101000000AE47694152B8844100000000AE470941
+            52B884410100000052B852410000404101000000AE470941B81EED4001000000
+            000020410000C040010000000000804100004041010000000000204100009041
+            01000000AE47094152B8844100000000B81E254052B8844101000000A470E540
+            0000404101000000B81E2540B81EED4001000000000080400000C04001000000
+            000020410000404101000000000080400000904101000000B81E254052B88441
+            03000000B81E254052B88441}
+          HitTest = False
+          Margins.Left = 5.000000000000000000
+          Margins.Top = 5.000000000000000000
+          Margins.Right = 5.000000000000000000
+          Margins.Bottom = 5.000000000000000000
+          Size.Width = 30.000000000000000000
+          Size.Height = 30.000000000000000000
+          Size.PlatformDefault = False
+          Stroke.Kind = None
+          WrapMode = Fit
+        end
+      end
+      object btnNextSeconde: TButton
+        Margins.Left = 5.000000000000000000
+        Margins.Top = 5.000000000000000000
+        Margins.Right = 5.000000000000000000
+        Margins.Bottom = 5.000000000000000000
+        Position.X = 466.000000000000000000
+        Position.Y = 5.000000000000000000
+        Size.Width = 40.000000000000000000
+        Size.Height = 40.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 4
+        TextSettings.Trimming = None
+        OnClick = btnNextSecondeClick
+        object pNextSeconde: TPath
+          Align = Client
+          Data.Path = {
+            0F0000000000000048E1B240B81EED40010000000000E0400000C04001000000
+            0000504100004041010000000000E040000090410100000048E1B24052B88441
+            0100000052B82241000040410100000048E1B240B81EED4000000000A4703941
+            B81EED4001000000000050410000C04001000000000098410000404101000000
+            000050410000904101000000A470394152B8844101000000295C814100004041
+            01000000A4703941B81EED4003000000A4703941B81EED40}
+          HitTest = False
+          Margins.Left = 5.000000000000000000
+          Margins.Top = 5.000000000000000000
+          Margins.Right = 5.000000000000000000
+          Margins.Bottom = 5.000000000000000000
+          Size.Width = 30.000000000000000000
+          Size.Height = 30.000000000000000000
+          Size.PlatformDefault = False
+          Stroke.Kind = None
+          WrapMode = Fit
+        end
+      end
+      object btnGotoEnd: TButton
+        Margins.Left = 5.000000000000000000
+        Margins.Top = 5.000000000000000000
+        Margins.Right = 5.000000000000000000
+        Margins.Bottom = 5.000000000000000000
+        Position.X = 516.000000000000000000
+        Position.Y = 5.000000000000000000
+        Size.Width = 40.000000000000000000
+        Size.Height = 40.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 3
+        TextSettings.Trimming = None
+        OnClick = btnGotoEndClick
+        object pGotoEnd: TPath
+          Align = Client
+          Data.Path = {
+            0900000000000000000080410000904101000000000090410000904101000000
+            000090410000C04001000000000080410000C040000000000000C04000009041
+            010000000000684100004041010000000000C0400000C040010000000000C040
+            00009041030000000000C04000009041}
+          HitTest = False
+          Margins.Left = 5.000000000000000000
+          Margins.Top = 5.000000000000000000
+          Margins.Right = 5.000000000000000000
+          Margins.Bottom = 5.000000000000000000
+          Size.Width = 30.000000000000000000
+          Size.Height = 30.000000000000000000
+          Size.PlatformDefault = False
+          Stroke.Kind = None
+          WrapMode = Fit
+        end
+      end
+    end
+    object MediaPlayerControl1: TMediaPlayerControl
+      Size.Width = 762.000000000000000000
+      Size.Height = 314.000000000000000000
+      Size.PlatformDefault = False
+      Align = Client
+      MediaPlayer = MediaPlayer1
+      Margins.Left = 5.000000000000000000
+      Margins.Top = 20.000000000000000000
+      Margins.Right = 5.000000000000000000
+      Margins.Bottom = 5.000000000000000000
+      object lblSourceFile: TLabel
+        Align = Top
+        Margins.Top = -20.000000000000000000
+        Position.Y = -20.000000000000000000
+        Size.Width = 762.000000000000000000
+        Size.Height = 17.000000000000000000
+        Size.PlatformDefault = False
+        TextSettings.HorzAlign = Center
+        Text = 'lblSourceFile'
+        TabOrder = 0
+      end
+    end
+    object tbVideo: TTrackBar
+      Align = Bottom
+      CanParentFocus = True
+      Orientation = Horizontal
+      Margins.Left = 5.000000000000000000
+      Margins.Top = 5.000000000000000000
+      Margins.Right = 5.000000000000000000
+      Margins.Bottom = 5.000000000000000000
+      Position.X = 5.000000000000000000
+      Position.Y = 344.000000000000000000
+      Size.Width = 762.000000000000000000
+      Size.Height = 19.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 4
+    end
+  end
   object ActionList1: TActionList
     Left = 56
     Top = 280
@@ -272,37 +596,5 @@ object frmMain: TfrmMain
       Text = '&Options'
       OnExecute = actOptionsExecute
     end
-  end
-  object MediaPlayer1: TMediaPlayer
-    Left = 56
-    Top = 344
-  end
-  object odVICUProject: TOpenDialog
-    DefaultExt = 'vicu'
-    Filter = 'Video Cutter Project (*.vicu)|*.vicu'
-    Options = [ofHideReadOnly, ofPathMustExist, ofFileMustExist, ofEnableSizing]
-    Left = 520
-    Top = 80
-  end
-  object scExportedVideo: TSaveDialog
-    DefaultExt = 'mp4'
-    Filter = 'Video MP4 (*.mp4)|*.mp4'
-    Options = [ofOverwritePrompt, ofHideReadOnly, ofPathMustExist, ofEnableSizing]
-    Left = 624
-    Top = 152
-  end
-  object svVICUProject: TSaveDialog
-    DefaultExt = 'vicu'
-    Filter = 'Video Cutter Project (*.vicu)|*.vicu'
-    Options = [ofOverwritePrompt, ofHideReadOnly, ofPathMustExist, ofEnableSizing]
-    Left = 520
-    Top = 152
-  end
-  object odVideoFile: TOpenDialog
-    DefaultExt = 'mp4'
-    Filter = 'Video MP4 (*.mp4)|*.mp4'
-    Options = [ofHideReadOnly, ofPathMustExist, ofFileMustExist, ofEnableSizing]
-    Left = 624
-    Top = 80
   end
 end

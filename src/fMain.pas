@@ -23,7 +23,8 @@ uses
   FMX.ActnList,
   FMX.Layouts,
   FMX.Media,
-  uProjectVICU;
+  uProjectVICU,
+  FMX.Objects;
 
 type
   TfrmMain = class(TForm)
@@ -31,7 +32,7 @@ type
     OlfAboutDialog1: TOlfAboutDialog;
     StatusBar1: TStatusBar;
     ToolBar1: TToolBar;
-    Label1: TLabel;
+    lblStatus: TLabel;
     ActionList1: TActionList;
     mnuMacOS: TMenuItem;
     mnuFile: TMenuItem;
@@ -60,14 +61,32 @@ type
     actProjectOptions: TAction;
     actAbout: TAction;
     actOptions: TAction;
-    VertScrollBox1: TVertScrollBox;
     MediaPlayer1: TMediaPlayer;
-    MediaPlayerControl1: TMediaPlayerControl;
     odVICUProject: TOpenDialog;
     scExportedVideo: TSaveDialog;
     svVICUProject: TSaveDialog;
     odVideoFile: TOpenDialog;
     btnProjectNew: TButton;
+    lProject: TLayout;
+    FlowLayout1: TFlowLayout;
+    btnGotoStart: TButton;
+    pGotoStart: TPath;
+    btnPrevSeconde: TButton;
+    pPrevSeconde: TPath;
+    btnPrevFrame: TButton;
+    pPrevFrame: TPath;
+    btnPlayPause: TButton;
+    pPlay: TPath;
+    pPause: TPath;
+    btnNextFrame: TButton;
+    pNextFrame: TPath;
+    btnNextSeconde: TButton;
+    pNextSeconde: TPath;
+    btnGotoEnd: TButton;
+    pGotoEnd: TPath;
+    MediaPlayerControl1: TMediaPlayerControl;
+    lblSourceFile: TLabel;
+    tbVideo: TTrackBar;
     procedure actQuitExecute(Sender: TObject);
     procedure actAboutExecute(Sender: TObject);
     procedure actProjectOpenExecute(Sender: TObject);
@@ -79,6 +98,13 @@ type
     procedure FormCreate(Sender: TObject);
     procedure OlfAboutDialog1URLClick(const AURL: string);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure btnPlayPauseClick(Sender: TObject);
+    procedure btnGotoStartClick(Sender: TObject);
+    procedure btnGotoEndClick(Sender: TObject);
+    procedure btnNextSecondeClick(Sender: TObject);
+    procedure btnPrevSecondeClick(Sender: TObject);
+    procedure btnPrevFrameClick(Sender: TObject);
+    procedure btnNextFrameClick(Sender: TObject);
   private
     FCurrentProject: TVICUProject;
     procedure SetCurrentProject(const Value: TVICUProject);
@@ -157,6 +183,8 @@ begin
 end;
 
 procedure TfrmMain.actProjectNewExecute(Sender: TObject);
+var
+  Project: TVICUProject;
 begin
   if assigned(CurrentProject) then
     actProjectCloseExecute(Sender);
@@ -168,14 +196,15 @@ begin
     tfile.Exists(odVideoFile.FileName) and
     (TPath.GetExtension(odVideoFile.FileName).ToLower = '.mp4') then
   begin
-    CurrentProject := TVICUProject.Create;
-    CurrentProject.SourceVideoFilePath := odVideoFile.FileName;
+    Project := TVICUProject.Create;
+    Project.SourceVideoFilePath := odVideoFile.FileName;
+    CurrentProject := Project;
   end;
 end;
 
 procedure TfrmMain.actProjectOpenExecute(Sender: TObject);
 var
-  project: TVICUProject;
+  Project: TVICUProject;
 begin
   if assigned(CurrentProject) then
     actProjectCloseExecute(Sender);
@@ -187,9 +216,9 @@ begin
     tfile.Exists(odVICUProject.FileName) and
     (TPath.GetExtension(odVICUProject.FileName).ToLower = '.vicu') then
   begin
-    project := TVICUProject.Create(odVICUProject.FileName);
-    if tfile.Exists(project.SourceVideoFilePath) then
-      CurrentProject := project
+    Project := TVICUProject.Create(odVICUProject.FileName);
+    if tfile.Exists(Project.SourceVideoFilePath) then
+      CurrentProject := Project
     else
       TDialogService.ShowMessage
         ('Can''t find the video source file. Please select it.',
@@ -197,7 +226,7 @@ begin
         var
           fld: string;
         begin
-          fld := TPath.GetDirectoryName(project.SourceVideoFilePath);
+          fld := TPath.GetDirectoryName(Project.SourceVideoFilePath);
           if odVideoFile.InitialDir.IsEmpty then
             if (not fld.IsEmpty) and TDirectory.Exists(fld) then
               odVideoFile.InitialDir := fld
@@ -208,11 +237,11 @@ begin
             tfile.Exists(odVideoFile.FileName) and
             (TPath.GetExtension(odVideoFile.FileName).ToLower = '.mp4') then
           begin
-            project.SourceVideoFilePath := odVideoFile.FileName;
-            CurrentProject := project;
+            Project.SourceVideoFilePath := odVideoFile.FileName;
+            CurrentProject := Project;
           end
           else
-            project.free;
+            Project.free;
         end);
   end;
 end;
@@ -242,6 +271,61 @@ end;
 procedure TfrmMain.actQuitExecute(Sender: TObject);
 begin
   close;
+end;
+
+procedure TfrmMain.btnGotoEndClick(Sender: TObject);
+begin
+  if MediaPlayer1.State = TMediaState.Playing then
+    btnPlayPauseClick(Sender);
+  MediaPlayer1.CurrentTime := MediaPlayer1.Duration;
+end;
+
+procedure TfrmMain.btnGotoStartClick(Sender: TObject);
+begin
+  if MediaPlayer1.State = TMediaState.Playing then
+    btnPlayPauseClick(Sender);
+  MediaPlayer1.CurrentTime := 0;
+end;
+
+procedure TfrmMain.btnNextFrameClick(Sender: TObject);
+begin
+  // TODO : à compléter
+end;
+
+procedure TfrmMain.btnNextSecondeClick(Sender: TObject);
+begin
+  if MediaPlayer1.CurrentTime + MediaTimeScale > MediaPlayer1.Duration then
+    MediaPlayer1.CurrentTime := MediaPlayer1.Duration
+  else
+    MediaPlayer1.CurrentTime := MediaPlayer1.CurrentTime + MediaTimeScale;
+end;
+
+procedure TfrmMain.btnPlayPauseClick(Sender: TObject);
+begin
+  if MediaPlayer1.State = TMediaState.Playing then
+  begin
+    MediaPlayer1.Stop;
+    pPause.Visible := false;
+  end
+  else
+  begin
+    MediaPlayer1.Play;
+    pPause.Visible := true;
+  end;
+  pPlay.Visible := not pPause.Visible;
+end;
+
+procedure TfrmMain.btnPrevFrameClick(Sender: TObject);
+begin
+  // TODO : à compléter
+end;
+
+procedure TfrmMain.btnPrevSecondeClick(Sender: TObject);
+begin
+  if MediaPlayer1.CurrentTime < MediaTimeScale then
+    MediaPlayer1.CurrentTime := 0
+  else
+    MediaPlayer1.CurrentTime := MediaPlayer1.CurrentTime - MediaTimeScale;
 end;
 
 procedure TfrmMain.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -319,14 +403,14 @@ end;
 procedure TfrmMain.InitMainMenuForMacOS;
 begin
 {$IFDEF MACOS}
-  mnuMacOS.visible := true;
+  mnuMacOS.Visible := true;
   actQuit.shortcut := scCommand + ord('Q'); // 4177;
   mnuHelpAbout.Parent := mnuMacOS;
-  mnuHelp.visible := (mnuHelp.Children[0].ChildrenCount > 0);
+  mnuHelp.Visible := (mnuHelp.Children[0].ChildrenCount > 0);
   mnuToolsOptions.Parent := mnuMacOS;
-  mnuTools.visible := (mnuTools.Children[0].ChildrenCount > 0);
+  mnuTools.Visible := (mnuTools.Children[0].ChildrenCount > 0);
 {$ELSE}
-  mnuMacOS.visible := false;
+  mnuMacOS.Visible := false;
 {$ENDIF}
   actAbout.Text := '&About ' + OlfAboutDialog1.Titre;
   btnAbout.Text := '&About';
@@ -340,7 +424,20 @@ end;
 procedure TfrmMain.SetCurrentProject(const Value: TVICUProject);
 begin
   FCurrentProject := Value;
-  // TODO : à compléter
+
+  if not assigned(FCurrentProject) then
+    lProject.Visible := false
+  else
+  begin
+    lProject.Visible := true;
+    MediaPlayer1.FileName := FCurrentProject.SourceVideoFilePath;
+    pPause.Visible := false;
+    pPlay.Visible := true;
+    // TODO : regarder le temps d'une tomate pour récupérer la durée du fichier
+    // TODO : adapter la taille de la trackbar à la durée du fichier
+    // TODO : afficher la liste des marqueurs
+    // TODO : afficher les tranches (à couper ou conserver)
+  end;
 
   TMessageManager.DefaultManager.SendMessage(self,
     TVICUProjectHasChangedMessage.Create(FCurrentProject));
@@ -359,16 +456,28 @@ begin
       if msg.Value = CurrentProject then
         InitMainFormCaption;
 
+      if assigned(CurrentProject) then
+        lblSourceFile.Text := TPath.GetFileName
+          (CurrentProject.SourceVideoFilePath)
+      else
+        lblSourceFile.Text := '';
+
       actProjectSave.Enabled := assigned(CurrentProject);
       actProjectOptions.Enabled := assigned(CurrentProject);
       actProjectClose.Enabled := assigned(CurrentProject);
 
       mnuProject.Enabled := assigned(CurrentProject);
 
-      btnProjectOpen.visible := not assigned(CurrentProject);
-      btnProjectNew.visible := btnProjectOpen.visible;
-      btnProjectClose.visible := not btnProjectOpen.visible;
-      btnProjectOptions.visible := not btnProjectOpen.visible;
+      btnProjectOpen.Visible := not assigned(CurrentProject);
+      btnProjectNew.Visible := btnProjectOpen.Visible;
+      btnProjectClose.Visible := not btnProjectOpen.Visible;
+      btnProjectOptions.Visible := not btnProjectOpen.Visible;
+
+      lblStatus.Text := '';
+
+      // Since no available options for the project, we hide the menu items and buttons
+      btnProjectOptions.Visible := false;
+      mnuProject.Visible := false;
     end);
 end;
 
