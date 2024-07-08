@@ -131,7 +131,7 @@ begin
     TDialogService.MessageDialog
       ('Current project has been changed. Do you want to save it ?',
       tmsgdlgtype.mtConfirmation, mbyesno, tmsgdlgbtn.mbYes, 0,
-      procedure(const AModalResult: TMOdalResult)
+      procedure(const AModalResult: TModalResult)
       begin
         if AModalResult = mryes then
           if not CurrentProject.FilePath.IsEmpty then
@@ -174,6 +174,8 @@ begin
 end;
 
 procedure TfrmMain.actProjectOpenExecute(Sender: TObject);
+var
+  project: TVICUProject;
 begin
   if assigned(CurrentProject) then
     actProjectCloseExecute(Sender);
@@ -184,7 +186,35 @@ begin
   if odVICUProject.Execute and (odVICUProject.FileName <> '') and
     tfile.Exists(odVICUProject.FileName) and
     (TPath.GetExtension(odVICUProject.FileName).ToLower = '.vicu') then
-    CurrentProject := TVICUProject.Create(odVICUProject.FileName);
+  begin
+    project := TVICUProject.Create(odVICUProject.FileName);
+    if tfile.Exists(project.SourceVideoFilePath) then
+      CurrentProject := project
+    else
+      TDialogService.ShowMessage
+        ('Can''t find the video source file. Please select it.',
+        procedure(const AModalResult: TModalResult)
+        var
+          fld: string;
+        begin
+          fld := TPath.GetDirectoryName(project.SourceVideoFilePath);
+          if odVideoFile.InitialDir.IsEmpty then
+            if (not fld.IsEmpty) and TDirectory.Exists(fld) then
+              odVideoFile.InitialDir := fld
+            else
+              odVideoFile.InitialDir := TPath.GetMoviesPath;
+
+          if odVideoFile.Execute and (odVideoFile.FileName <> '') and
+            tfile.Exists(odVideoFile.FileName) and
+            (TPath.GetExtension(odVideoFile.FileName).ToLower = '.mp4') then
+          begin
+            project.SourceVideoFilePath := odVideoFile.FileName;
+            CurrentProject := project;
+          end
+          else
+            project.free;
+        end);
+  end;
 end;
 
 procedure TfrmMain.actProjectOptionsExecute(Sender: TObject);
