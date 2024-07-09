@@ -16,7 +16,8 @@ uses
   FMX.Layouts,
   FMX.StdCtrls,
   FMX.Edit,
-  FMX.Controls.Presentation;
+  FMX.Controls.Presentation,
+  Olf.FMX.SelectDirectory;
 
 type
   TfrmOptions = class(TForm)
@@ -29,12 +30,25 @@ type
     btnSaveAndClose: TButton;
     btnCancel: TButton;
     OpenDialogFFmpeg: TOpenDialog;
+    lblDefaultProjectFolder: TLabel;
+    edtDefaultProjectFolder: TEdit;
+    btnDefaultProjectFolder: TEllipsesEditButton;
+    lblDefaultSourceVideoFolder: TLabel;
+    edtDefaultSourceVideoFolder: TEdit;
+    btnDefaultSourceVideoFolder: TEllipsesEditButton;
+    lblDefaultExportFolder: TLabel;
+    edtDefaultExportFolder: TEdit;
+    btnDefaultExportFolder: TEllipsesEditButton;
+    OlfSelectDirectoryDialog1: TOlfSelectDirectoryDialog;
     procedure btnFFmpegDownloadClick(Sender: TObject);
     procedure btnFFmpegPathChooseClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
     procedure btnSaveAndCloseClick(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure FormCreate(Sender: TObject);
+    procedure btnDefaultProjectFolderClick(Sender: TObject);
+    procedure btnDefaultSourceVideoFolderClick(Sender: TObject);
+    procedure btnDefaultExportFolderClick(Sender: TObject);
   private
     procedure SaveConfig;
     procedure InitConfigFields;
@@ -58,6 +72,39 @@ begin
   close;
 end;
 
+procedure TfrmOptions.btnDefaultExportFolderClick(Sender: TObject);
+begin
+  if (not edtDefaultExportFolder.Text.IsEmpty) and
+    tdirectory.Exists(edtDefaultExportFolder.Text) then
+    OlfSelectDirectoryDialog1.Directory := edtDefaultExportFolder.Text;
+
+  if OlfSelectDirectoryDialog1.Execute and
+    tdirectory.Exists(OlfSelectDirectoryDialog1.Directory) then
+    edtDefaultExportFolder.Text := OlfSelectDirectoryDialog1.Directory;
+end;
+
+procedure TfrmOptions.btnDefaultProjectFolderClick(Sender: TObject);
+begin
+  if (not edtDefaultProjectFolder.Text.IsEmpty) and
+    tdirectory.Exists(edtDefaultProjectFolder.Text) then
+    OlfSelectDirectoryDialog1.Directory := edtDefaultProjectFolder.Text;
+
+  if OlfSelectDirectoryDialog1.Execute and
+    tdirectory.Exists(OlfSelectDirectoryDialog1.Directory) then
+    edtDefaultProjectFolder.Text := OlfSelectDirectoryDialog1.Directory;
+end;
+
+procedure TfrmOptions.btnDefaultSourceVideoFolderClick(Sender: TObject);
+begin
+  if (not edtDefaultSourceVideoFolder.Text.IsEmpty) and
+    tdirectory.Exists(edtDefaultSourceVideoFolder.Text) then
+    OlfSelectDirectoryDialog1.Directory := edtDefaultSourceVideoFolder.Text;
+
+  if OlfSelectDirectoryDialog1.Execute and
+    tdirectory.Exists(OlfSelectDirectoryDialog1.Directory) then
+    edtDefaultSourceVideoFolder.Text := OlfSelectDirectoryDialog1.Directory;
+end;
+
 procedure TfrmOptions.btnFFmpegDownloadClick(Sender: TObject);
 begin
   url_open_in_browser('https://ffmpeg.org/download.html');
@@ -65,7 +112,7 @@ end;
 
 procedure TfrmOptions.btnFFmpegPathChooseClick(Sender: TObject);
 begin
-  if (not edtFFmpegPath.Text.IsEmpty) and tfile.exists(edtFFmpegPath.Text) then
+  if (not edtFFmpegPath.Text.IsEmpty) and tfile.Exists(edtFFmpegPath.Text) then
   begin
     OpenDialogFFmpeg.InitialDir := tpath.getdirectoryname(edtFFmpegPath.Text);
     OpenDialogFFmpeg.FileName := edtFFmpegPath.Text;
@@ -73,7 +120,7 @@ begin
   else if OpenDialogFFmpeg.InitialDir.IsEmpty then
     OpenDialogFFmpeg.InitialDir := tpath.GetDownloadsPath;
 
-  if OpenDialogFFmpeg.Execute and tfile.exists(OpenDialogFFmpeg.FileName) then
+  if OpenDialogFFmpeg.Execute and tfile.Exists(OpenDialogFFmpeg.FileName) then
     edtFFmpegPath.Text := OpenDialogFFmpeg.FileName;
 end;
 
@@ -140,6 +187,9 @@ var
   e: TEdit;
 begin
   edtFFmpegPath.TagString := tconfig.FFmpegPath;
+  edtDefaultProjectFolder.TagString := tconfig.DefaultProjectFolder;
+  edtDefaultSourceVideoFolder.TagString := tconfig.DefaultSourceVideoFolder;
+  edtDefaultExportFolder.TagString := tconfig.DefaultExportFolder;
 
   for i := 0 to VertScrollBox1.Content.ChildrenCount - 1 do
     if VertScrollBox1.Content.Children[i] is TEdit then
@@ -151,6 +201,9 @@ end;
 
 procedure TfrmOptions.SaveConfig;
 begin
+  tconfig.DefaultProjectFolder := edtDefaultProjectFolder.Text;
+  tconfig.DefaultSourceVideoFolder := edtDefaultSourceVideoFolder.Text;
+  tconfig.DefaultExportFolder := edtDefaultExportFolder.Text;
   tconfig.FFmpegPath := edtFFmpegPath.Text;
   tconfig.Save;
 

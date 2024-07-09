@@ -25,7 +25,6 @@ object frmOptions: TfrmOptions
       Margins.Left = 10.000000000000000000
       Margins.Top = 10.000000000000000000
       Margins.Right = 10.000000000000000000
-      Margins.Bottom = 5.000000000000000000
       Position.X = 10.000000000000000000
       Position.Y = 10.000000000000000000
       Size.Width = 620.000000000000000000
@@ -50,7 +49,7 @@ object frmOptions: TfrmOptions
       Align = Top
       TabOrder = 1
       Position.X = 10.000000000000000000
-      Position.Y = 37.000000000000000000
+      Position.Y = 32.000000000000000000
       Margins.Left = 10.000000000000000000
       Margins.Top = 5.000000000000000000
       Margins.Right = 10.000000000000000000
@@ -68,6 +67,123 @@ object frmOptions: TfrmOptions
         Size.PlatformDefault = False
         TabOrder = 0
         OnClick = btnFFmpegPathChooseClick
+      end
+    end
+    object lblDefaultProjectFolder: TLabel
+      Align = Top
+      FocusControl = edtDefaultProjectFolder
+      Margins.Left = 10.000000000000000000
+      Margins.Top = 10.000000000000000000
+      Margins.Right = 10.000000000000000000
+      Position.X = 10.000000000000000000
+      Position.Y = 74.000000000000000000
+      Size.Width = 620.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'Default projects folder'
+      TabOrder = 2
+    end
+    object edtDefaultProjectFolder: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      Align = Top
+      TabOrder = 3
+      Position.X = 10.000000000000000000
+      Position.Y = 96.000000000000000000
+      Margins.Left = 10.000000000000000000
+      Margins.Top = 5.000000000000000000
+      Margins.Right = 10.000000000000000000
+      Margins.Bottom = 10.000000000000000000
+      Size.Width = 620.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      object btnDefaultProjectFolder: TEllipsesEditButton
+        Touch.InteractiveGestures = [LongTap]
+        CanFocus = False
+        Cursor = crArrow
+        TextSettings.Trimming = None
+        Size.Width = 28.000000000000000000
+        Size.Height = 18.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 0
+        OnClick = btnDefaultProjectFolderClick
+      end
+    end
+    object lblDefaultSourceVideoFolder: TLabel
+      Align = Top
+      FocusControl = edtDefaultSourceVideoFolder
+      Margins.Left = 10.000000000000000000
+      Margins.Top = 10.000000000000000000
+      Margins.Right = 10.000000000000000000
+      Position.X = 10.000000000000000000
+      Position.Y = 138.000000000000000000
+      Size.Width = 620.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'Default videos folder'
+      TabOrder = 4
+    end
+    object edtDefaultSourceVideoFolder: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      Align = Top
+      TabOrder = 5
+      Position.X = 10.000000000000000000
+      Position.Y = 160.000000000000000000
+      Margins.Left = 10.000000000000000000
+      Margins.Top = 5.000000000000000000
+      Margins.Right = 10.000000000000000000
+      Margins.Bottom = 10.000000000000000000
+      Size.Width = 620.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      object btnDefaultSourceVideoFolder: TEllipsesEditButton
+        Touch.InteractiveGestures = [LongTap]
+        CanFocus = False
+        Cursor = crArrow
+        TextSettings.Trimming = None
+        Size.Width = 28.000000000000000000
+        Size.Height = 18.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 0
+        OnClick = btnDefaultSourceVideoFolderClick
+      end
+    end
+    object lblDefaultExportFolder: TLabel
+      Align = Top
+      FocusControl = edtDefaultExportFolder
+      Margins.Left = 10.000000000000000000
+      Margins.Top = 10.000000000000000000
+      Margins.Right = 10.000000000000000000
+      Position.X = 10.000000000000000000
+      Position.Y = 202.000000000000000000
+      Size.Width = 620.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'Default exported videos folder'
+      TabOrder = 6
+    end
+    object edtDefaultExportFolder: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      Align = Top
+      TabOrder = 7
+      Position.X = 10.000000000000000000
+      Position.Y = 224.000000000000000000
+      Margins.Left = 10.000000000000000000
+      Margins.Top = 5.000000000000000000
+      Margins.Right = 10.000000000000000000
+      Margins.Bottom = 10.000000000000000000
+      Size.Width = 620.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      object btnDefaultExportFolder: TEllipsesEditButton
+        Touch.InteractiveGestures = [LongTap]
+        CanFocus = False
+        Cursor = crArrow
+        TextSettings.Trimming = None
+        Size.Width = 28.000000000000000000
+        Size.Height = 18.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 0
+        OnClick = btnDefaultExportFolderClick
       end
     end
   end
@@ -141,5 +257,10 @@ object frmOptions: TfrmOptions
     Options = [ofHideReadOnly, ofExtensionDifferent, ofPathMustExist, ofFileMustExist, ofEnableSizing]
     Left = 432
     Top = 16
+  end
+  object OlfSelectDirectoryDialog1: TOlfSelectDirectoryDialog
+    Root = ''
+    Left = 80
+    Top = 272
   end
 end
