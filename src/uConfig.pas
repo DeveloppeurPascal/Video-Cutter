@@ -7,14 +7,23 @@ type
   private
     class procedure SetFFmpegPath(const Value: string); static;
     class function GetFFmpegPath: string; static;
+    class procedure SetDefaultExportFolder(const Value: string); static;
+    class procedure SetDefaultProjectFolder(const Value: string); static;
+    class procedure SetDefaultSourceVideoFolder(const Value: string); static;
+    class function GetDefaultExportFolder: string; static;
+    class function GetDefaultProjectFolder: string; static;
+    class function GetDefaultSourceVideoFolder: string; static;
   protected
   public
     class property FFmpegPath: string read GetFFmpegPath write SetFFmpegPath;
+    class property DefaultProjectFolder: string read GetDefaultProjectFolder
+      write SetDefaultProjectFolder;
+    class property DefaultSourceVideoFolder: string
+      read GetDefaultSourceVideoFolder write SetDefaultSourceVideoFolder;
+    class property DefaultExportFolder: string read GetDefaultExportFolder
+      write SetDefaultExportFolder;
     class procedure Save;
     class procedure Cancel;
-    // TODO : add default "project folder"
-    // TODO : add default "source video folder"
-    // TODO : add default "export video folder"
   end;
 
 implementation
@@ -23,6 +32,7 @@ uses
   System.Classes,
   System.Types,
   System.SysUtils,
+  System.IOUtils,
   Olf.RTL.Params,
   Olf.RTL.CryptDecrypt;
 
@@ -79,6 +89,21 @@ begin
   tparams.Cancel;
 end;
 
+class function TConfig.GetDefaultExportFolder: string;
+begin
+  result := tparams.getValue('DEF', tpath.GetMoviesPath);
+end;
+
+class function TConfig.GetDefaultProjectFolder: string;
+begin
+  result := tparams.getValue('DPF', tpath.GetMoviesPath);
+end;
+
+class function TConfig.GetDefaultSourceVideoFolder: string;
+begin
+  result := tparams.getValue('DSVF', tpath.GetMoviesPath);
+end;
+
 class function TConfig.GetFFmpegPath: string;
 begin
   result := tparams.getValue('FFmpeg', '');
@@ -87,6 +112,21 @@ end;
 class procedure TConfig.Save;
 begin
   tparams.Save;
+end;
+
+class procedure TConfig.SetDefaultExportFolder(const Value: string);
+begin
+  tparams.setValue('DEF', Value);
+end;
+
+class procedure TConfig.SetDefaultProjectFolder(const Value: string);
+begin
+  tparams.setValue('DPF', Value);
+end;
+
+class procedure TConfig.SetDefaultSourceVideoFolder(const Value: string);
+begin
+  tparams.setValue('DSVF', Value);
 end;
 
 class procedure TConfig.SetFFmpegPath(const Value: string);
