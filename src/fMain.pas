@@ -484,23 +484,66 @@ begin
   FCurrentProject := Value;
 
   if not assigned(FCurrentProject) then
-    lProject.Visible := false
+  begin
+    lProject.Visible := false;
+    CheckVideoPositionTimer.Enabled := false;
+    TMessageManager.DefaultManager.SendMessage(self,
+      TVICUProjectHasChangedMessage.Create(FCurrentProject));
+  end
   else
   begin
-    lProject.Visible := true;
     MediaPlayer1.FileName := FCurrentProject.SourceVideoFilePath;
-    pPause.Visible := false;
-    pPlay.Visible := true;
-    CheckVideoPositionTimer.interval := round((1 / 30) * 1000); // 30 FPS
-    // TODO : regarder le temps d'une tomate pour récupérer la durée du fichier
-    // TODO : adapter la taille de la trackbar à la durée du fichier
-    // TODO : afficher la liste des marqueurs
-    // TODO : afficher les tranches (à couper ou conserver)
-  end;
-  CheckVideoPositionTimer.Enabled := lProject.Visible;
+    MediaPlayer1.Play;
+    tthread.CreateAnonymousThread(
+      procedure
+      var
+        i: integer;
+        ok: Boolean;
+      begin
+        i := 0;
+        ok := false;
+        repeat
+          sleep(100);
+          tthread.Synchronize(nil,
+            procedure
+            begin
+              if (MediaPlayer1.Duration > 0) then
+              begin
+                MediaPlayer1.Stop;
+                MediaPlayer1.CurrentTime := 0;
+                ok := true;
+              end;
+            end);
+          inc(i);
+        until tthread.CheckTerminated or ok or (i > 600); // Wait 1 minute max
+        if not ok then
+          tthread.queue(nil,
+            procedure
+            begin // the video can't be read by TMediaPlayer
+              CurrentProject.free;
+              CurrentProject := nil;
+            end)
+        else
+          tthread.queue(nil,
+            procedure
+            begin
+              lProject.Visible := true;
+              pPause.Visible := false;
+              pPlay.Visible := true;
 
-  TMessageManager.DefaultManager.SendMessage(self,
-    TVICUProjectHasChangedMessage.Create(FCurrentProject));
+              CheckVideoPositionTimer.interval := round((1 / 30) * 1000);
+              // 30 FPS
+              CheckVideoPositionTimer.Enabled := true;
+
+              // TODO : adapter la taille de la trackbar à la durée du fichier
+              // TODO : afficher la liste des marqueurs
+              // TODO : afficher les tranches (à couper ou conserver)
+              TMessageManager.DefaultManager.SendMessage(self,
+                TVICUProjectHasChangedMessage.Create(FCurrentProject));
+            end);
+      end).start;
+  end;
+
 end;
 
 procedure TfrmMain.SubscribeToProjectChangedMessage;
