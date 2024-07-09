@@ -87,6 +87,7 @@ type
     MediaPlayerControl1: TMediaPlayerControl;
     lblSourceFile: TLabel;
     tbVideo: TTrackBar;
+    CheckVideoPositionTimer: TTimer;
     procedure actQuitExecute(Sender: TObject);
     procedure actAboutExecute(Sender: TObject);
     procedure actProjectOpenExecute(Sender: TObject);
@@ -105,6 +106,7 @@ type
     procedure btnPrevSecondeClick(Sender: TObject);
     procedure btnPrevFrameClick(Sender: TObject);
     procedure btnNextFrameClick(Sender: TObject);
+    procedure CheckVideoPositionTimerTimer(Sender: TObject);
   private
     FCurrentProject: TVICUProject;
     procedure SetCurrentProject(const Value: TVICUProject);
@@ -370,6 +372,20 @@ begin
   // end;
 end;
 
+procedure TfrmMain.CheckVideoPositionTimerTimer(Sender: TObject);
+begin
+  if assigned(CurrentProject) and (MediaPlayer1.State = TMediaState.Playing)
+  then
+  begin
+    if (MediaPlayer1.CurrentTime >= MediaPlayer1.Duration) then
+    begin
+      btnPlayPauseClick(Sender);
+      MediaPlayer1.CurrentTime := MediaPlayer1.Duration;
+    end;
+    // TODO : modifier position trackbar
+  end;
+end;
+
 procedure TfrmMain.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 begin
   if assigned(CurrentProject) then
@@ -475,11 +491,13 @@ begin
     MediaPlayer1.FileName := FCurrentProject.SourceVideoFilePath;
     pPause.Visible := false;
     pPlay.Visible := true;
+    CheckVideoPositionTimer.interval := round((1 / 30) * 1000); // 30 FPS
     // TODO : regarder le temps d'une tomate pour récupérer la durée du fichier
     // TODO : adapter la taille de la trackbar à la durée du fichier
     // TODO : afficher la liste des marqueurs
     // TODO : afficher les tranches (à couper ou conserver)
   end;
+  CheckVideoPositionTimer.Enabled := lProject.Visible;
 
   TMessageManager.DefaultManager.SendMessage(self,
     TVICUProjectHasChangedMessage.Create(FCurrentProject));

@@ -597,4 +597,9 @@ object frmMain: TfrmMain
       OnExecute = actOptionsExecute
     end
   end
+  object CheckVideoPositionTimer: TTimer
+    OnTimer = CheckVideoPositionTimerTimer
+    Left = 240
+    Top = 176
+  end
 end
