@@ -278,6 +278,11 @@ begin
   if MediaPlayer1.State = TMediaState.Playing then
     btnPlayPauseClick(Sender);
   MediaPlayer1.CurrentTime := MediaPlayer1.Duration;
+  // if not(MediaPlayer1.State = TMediaState.Playing) then
+  // begin
+  // MediaPlayer1.Play;
+  // MediaPlayer1.Stop;
+  // end;
 end;
 
 procedure TfrmMain.btnGotoStartClick(Sender: TObject);
@@ -285,19 +290,40 @@ begin
   if MediaPlayer1.State = TMediaState.Playing then
     btnPlayPauseClick(Sender);
   MediaPlayer1.CurrentTime := 0;
+  // if not(MediaPlayer1.State = TMediaState.Playing) then
+  // begin
+  // MediaPlayer1.Play;
+  // MediaPlayer1.Stop;
+  // end;
 end;
 
 procedure TfrmMain.btnNextFrameClick(Sender: TObject);
+var
+  FrameDuration: int64; // we suppose the video is in 30 FPS
 begin
-  // TODO : à compléter
+  FrameDuration := round((1 / 30) * mediatimescale);
+  if MediaPlayer1.CurrentTime + FrameDuration > MediaPlayer1.Duration then
+    MediaPlayer1.CurrentTime := MediaPlayer1.Duration
+  else
+    MediaPlayer1.CurrentTime := MediaPlayer1.CurrentTime + FrameDuration;
+  // if not(MediaPlayer1.State = TMediaState.Playing) then
+  // begin
+  // MediaPlayer1.Play;
+  // MediaPlayer1.Stop;
+  // end;
 end;
 
 procedure TfrmMain.btnNextSecondeClick(Sender: TObject);
 begin
-  if MediaPlayer1.CurrentTime + MediaTimeScale > MediaPlayer1.Duration then
+  if MediaPlayer1.CurrentTime + mediatimescale > MediaPlayer1.Duration then
     MediaPlayer1.CurrentTime := MediaPlayer1.Duration
   else
-    MediaPlayer1.CurrentTime := MediaPlayer1.CurrentTime + MediaTimeScale;
+    MediaPlayer1.CurrentTime := MediaPlayer1.CurrentTime + mediatimescale;
+  // if not(MediaPlayer1.State = TMediaState.Playing) then
+  // begin
+  // MediaPlayer1.Play;
+  // MediaPlayer1.Stop;
+  // end;
 end;
 
 procedure TfrmMain.btnPlayPauseClick(Sender: TObject);
@@ -316,16 +342,32 @@ begin
 end;
 
 procedure TfrmMain.btnPrevFrameClick(Sender: TObject);
+var
+  FrameDuration: int64; // we suppose the video is in 30 FPS
 begin
-  // TODO : à compléter
+  FrameDuration := round((1 / 30) * mediatimescale);
+  if MediaPlayer1.CurrentTime < FrameDuration then
+    MediaPlayer1.CurrentTime := 0
+  else
+    MediaPlayer1.CurrentTime := MediaPlayer1.CurrentTime - FrameDuration;
+  // if not(MediaPlayer1.State = TMediaState.Playing) then
+  // begin
+  // MediaPlayer1.Play;
+  // MediaPlayer1.Stop;
+  // end;
 end;
 
 procedure TfrmMain.btnPrevSecondeClick(Sender: TObject);
 begin
-  if MediaPlayer1.CurrentTime < MediaTimeScale then
+  if MediaPlayer1.CurrentTime < mediatimescale then
     MediaPlayer1.CurrentTime := 0
   else
-    MediaPlayer1.CurrentTime := MediaPlayer1.CurrentTime - MediaTimeScale;
+    MediaPlayer1.CurrentTime := MediaPlayer1.CurrentTime - mediatimescale;
+  // if not(MediaPlayer1.State = TMediaState.Playing) then
+  // begin
+  // MediaPlayer1.Play;
+  // MediaPlayer1.Stop;
+  // end;
 end;
 
 procedure TfrmMain.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
