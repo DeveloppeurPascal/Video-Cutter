@@ -560,6 +560,7 @@ object frmMain: TfrmMain
       Size.Height = 19.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 4
+      OnTracking = tbVideoTracking
     end
   end
   object ActionList1: TActionList

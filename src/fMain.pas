@@ -107,10 +107,15 @@ type
     procedure btnPrevFrameClick(Sender: TObject);
     procedure btnNextFrameClick(Sender: TObject);
     procedure CheckVideoPositionTimerTimer(Sender: TObject);
+    procedure tbVideoTracking(Sender: TObject);
   private
     FCurrentProject: TVICUProject;
     procedure SetCurrentProject(const Value: TVICUProject);
+    procedure SetCurrentTime(const Value: int64);
+    function GetCurrentTime: int64;
   protected
+    FTrackingFromMediaPlayer: Boolean;
+    property CurrentTime: int64 read GetCurrentTime write SetCurrentTime;
     procedure InitMainFormCaption;
     procedure InitAboutDialogDescriptionAndLicense;
     procedure InitMainMenuForMacOS;
@@ -279,24 +284,14 @@ procedure TfrmMain.btnGotoEndClick(Sender: TObject);
 begin
   if MediaPlayer1.State = TMediaState.Playing then
     btnPlayPauseClick(Sender);
-  MediaPlayer1.CurrentTime := MediaPlayer1.Duration;
-  // if not(MediaPlayer1.State = TMediaState.Playing) then
-  // begin
-  // MediaPlayer1.Play;
-  // MediaPlayer1.Stop;
-  // end;
+  CurrentTime := MediaPlayer1.Duration;
 end;
 
 procedure TfrmMain.btnGotoStartClick(Sender: TObject);
 begin
   if MediaPlayer1.State = TMediaState.Playing then
     btnPlayPauseClick(Sender);
-  MediaPlayer1.CurrentTime := 0;
-  // if not(MediaPlayer1.State = TMediaState.Playing) then
-  // begin
-  // MediaPlayer1.Play;
-  // MediaPlayer1.Stop;
-  // end;
+  CurrentTime := 0;
 end;
 
 procedure TfrmMain.btnNextFrameClick(Sender: TObject);
@@ -304,28 +299,12 @@ var
   FrameDuration: int64; // we suppose the video is in 30 FPS
 begin
   FrameDuration := round((1 / 30) * mediatimescale);
-  if MediaPlayer1.CurrentTime + FrameDuration > MediaPlayer1.Duration then
-    MediaPlayer1.CurrentTime := MediaPlayer1.Duration
-  else
-    MediaPlayer1.CurrentTime := MediaPlayer1.CurrentTime + FrameDuration;
-  // if not(MediaPlayer1.State = TMediaState.Playing) then
-  // begin
-  // MediaPlayer1.Play;
-  // MediaPlayer1.Stop;
-  // end;
+  CurrentTime := CurrentTime + FrameDuration;
 end;
 
 procedure TfrmMain.btnNextSecondeClick(Sender: TObject);
 begin
-  if MediaPlayer1.CurrentTime + mediatimescale > MediaPlayer1.Duration then
-    MediaPlayer1.CurrentTime := MediaPlayer1.Duration
-  else
-    MediaPlayer1.CurrentTime := MediaPlayer1.CurrentTime + mediatimescale;
-  // if not(MediaPlayer1.State = TMediaState.Playing) then
-  // begin
-  // MediaPlayer1.Play;
-  // MediaPlayer1.Stop;
-  // end;
+  CurrentTime := CurrentTime + mediatimescale;
 end;
 
 procedure TfrmMain.btnPlayPauseClick(Sender: TObject);
@@ -348,28 +327,12 @@ var
   FrameDuration: int64; // we suppose the video is in 30 FPS
 begin
   FrameDuration := round((1 / 30) * mediatimescale);
-  if MediaPlayer1.CurrentTime < FrameDuration then
-    MediaPlayer1.CurrentTime := 0
-  else
-    MediaPlayer1.CurrentTime := MediaPlayer1.CurrentTime - FrameDuration;
-  // if not(MediaPlayer1.State = TMediaState.Playing) then
-  // begin
-  // MediaPlayer1.Play;
-  // MediaPlayer1.Stop;
-  // end;
+  CurrentTime := CurrentTime - FrameDuration;
 end;
 
 procedure TfrmMain.btnPrevSecondeClick(Sender: TObject);
 begin
-  if MediaPlayer1.CurrentTime < mediatimescale then
-    MediaPlayer1.CurrentTime := 0
-  else
-    MediaPlayer1.CurrentTime := MediaPlayer1.CurrentTime - mediatimescale;
-  // if not(MediaPlayer1.State = TMediaState.Playing) then
-  // begin
-  // MediaPlayer1.Play;
-  // MediaPlayer1.Stop;
-  // end;
+  CurrentTime := CurrentTime - mediatimescale;
 end;
 
 procedure TfrmMain.CheckVideoPositionTimerTimer(Sender: TObject);
@@ -377,12 +340,20 @@ begin
   if assigned(CurrentProject) and (MediaPlayer1.State = TMediaState.Playing)
   then
   begin
-    if (MediaPlayer1.CurrentTime >= MediaPlayer1.Duration) then
+    if (CurrentTime >= MediaPlayer1.Duration) then
     begin
       btnPlayPauseClick(Sender);
-      MediaPlayer1.CurrentTime := MediaPlayer1.Duration;
+      CurrentTime := MediaPlayer1.Duration;
+    end
+    else
+    begin
+      FTrackingFromMediaPlayer := true;
+      try
+        tbVideo.Value := CurrentTime / mediatimescale;
+      finally
+        FTrackingFromMediaPlayer := false;
+      end;
     end;
-    // TODO : modifier position trackbar
   end;
 end;
 
@@ -405,6 +376,11 @@ begin
   InitMainFormCaption;
   InitAboutDialogDescriptionAndLicense;
   InitMainMenuForMacOS;
+end;
+
+function TfrmMain.GetCurrentTime: int64;
+begin
+  result := MediaPlayer1.CurrentTime;
 end;
 
 procedure TfrmMain.InitAboutDialogDescriptionAndLicense;
@@ -510,7 +486,6 @@ begin
               if (MediaPlayer1.Duration > 0) then
               begin
                 MediaPlayer1.Stop;
-                MediaPlayer1.CurrentTime := 0;
                 ok := true;
               end;
             end);
@@ -536,6 +511,10 @@ begin
               CheckVideoPositionTimer.Enabled := true;
 
               // TODO : adapter la taille de la trackbar à la durée du fichier
+              tbVideo.min := 0;
+              tbVideo.Max := MediaPlayer1.Duration / mediatimescale;
+              CurrentTime := 0;
+
               // TODO : afficher la liste des marqueurs
               // TODO : afficher les tranches (à couper ou conserver)
               TMessageManager.DefaultManager.SendMessage(self,
@@ -544,6 +523,33 @@ begin
       end).start;
   end;
 
+end;
+
+procedure TfrmMain.SetCurrentTime(const Value: int64);
+var
+  ct: int64;
+begin
+  if (Value < 1) then
+    ct := 0
+  else if (Value > MediaPlayer1.Duration) then
+    ct := MediaPlayer1.Duration
+  else
+    ct := Value;
+
+  MediaPlayer1.CurrentTime := ct;
+  FTrackingFromMediaPlayer := true;
+  try
+    tbVideo.Value := ct / mediatimescale;
+  finally
+    FTrackingFromMediaPlayer := false;
+  end;
+
+  // TODO : à retirer si on arrive à résoudre le positionnnement autrement
+  // if not(MediaPlayer1.State = TMediaState.Playing) then
+  // begin
+  // MediaPlayer1.Play;
+  // MediaPlayer1.Stop;
+  // end;
 end;
 
 procedure TfrmMain.SubscribeToProjectChangedMessage;
@@ -582,6 +588,14 @@ begin
       btnProjectOptions.Visible := false;
       mnuProject.Visible := false;
     end);
+end;
+
+procedure TfrmMain.tbVideoTracking(Sender: TObject);
+begin
+  if FTrackingFromMediaPlayer then
+    exit;
+
+  CurrentTime := round(tbVideo.Value * mediatimescale);
 end;
 
 initialization
