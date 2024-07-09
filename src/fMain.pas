@@ -149,7 +149,8 @@ uses
   System.IOUtils,
   Olf.FMX.AboutDialogForm,
   u_urlOpen,
-  fOptions;
+  fOptions,
+  uConfig;
 
 procedure TfrmMain.actAboutExecute(Sender: TObject);
 begin
@@ -208,7 +209,7 @@ begin
     actProjectCloseExecute(Sender);
 
   if odVideoFile.InitialDir.IsEmpty then
-    odVideoFile.InitialDir := TPath.GetMoviesPath;
+    odVideoFile.InitialDir := tconfig.DefaultSourceVideoFolder;
 
   if odVideoFile.Execute and (odVideoFile.FileName <> '') and
     tfile.Exists(odVideoFile.FileName) and
@@ -228,7 +229,7 @@ begin
     actProjectCloseExecute(Sender);
 
   if odVICUProject.InitialDir.IsEmpty then
-    odVICUProject.InitialDir := TPath.GetMoviesPath;
+    odVICUProject.InitialDir := tconfig.DefaultProjectFolder;
 
   if odVICUProject.Execute and (odVICUProject.FileName <> '') and
     tfile.Exists(odVICUProject.FileName) and
@@ -249,7 +250,7 @@ begin
             if (not fld.IsEmpty) and TDirectory.Exists(fld) then
               odVideoFile.InitialDir := fld
             else
-              odVideoFile.InitialDir := TPath.GetMoviesPath;
+              odVideoFile.InitialDir := tconfig.DefaultSourceVideoFolder;
 
           if odVideoFile.Execute and (odVideoFile.FileName <> '') and
             tfile.Exists(odVideoFile.FileName) and
@@ -279,7 +280,7 @@ begin
   else
   begin
     if svVICUProject.InitialDir.IsEmpty then
-      svVICUProject.InitialDir := TPath.GetMoviesPath;
+      svVICUProject.InitialDir := tconfig.DefaultProjectFolder;
 
     if svVICUProject.Execute and (svVICUProject.FileName <> '') then
       CurrentProject.SaveToFile(svVICUProject.FileName);
