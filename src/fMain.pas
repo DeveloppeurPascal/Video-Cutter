@@ -110,12 +110,18 @@ type
     procedure tbVideoTracking(Sender: TObject);
   private
     FCurrentProject: TVICUProject;
+    FVideoDuration: int64;
+    FVideoDurationSecondes: double;
     procedure SetCurrentProject(const Value: TVICUProject);
     procedure SetCurrentTime(const Value: int64);
     function GetCurrentTime: int64;
+    procedure UpdateTrackbarValue(const CurTime: int64);
+    procedure SetVideoDuration(const Value: int64);
   protected
     FTrackingFromMediaPlayer: Boolean;
     property CurrentTime: int64 read GetCurrentTime write SetCurrentTime;
+    property VideoDuration: int64 read FVideoDuration write SetVideoDuration;
+    property VideoDurationSecondes: double read FVideoDurationSecondes;
     procedure InitMainFormCaption;
     procedure InitAboutDialogDescriptionAndLicense;
     procedure InitMainMenuForMacOS;
@@ -123,6 +129,11 @@ type
   public
     property CurrentProject: TVICUProject read FCurrentProject
       write SetCurrentProject;
+    /// <summary>
+    /// converti une durée en secondes vers un format HHH:MM:SS textuel (pour la ligne de commande de FFmpeg)
+    /// </summary>
+    function SecondesToHHMMSS(const DureeEnSecondes: int64): string; overload;
+    function SecondesToHHMMSS(const DureeEnSecondes: double): string; overload;
   end;
 
 var
@@ -284,7 +295,7 @@ procedure TfrmMain.btnGotoEndClick(Sender: TObject);
 begin
   if MediaPlayer1.State = TMediaState.Playing then
     btnPlayPauseClick(Sender);
-  CurrentTime := MediaPlayer1.Duration;
+  CurrentTime := VideoDuration;
 end;
 
 procedure TfrmMain.btnGotoStartClick(Sender: TObject);
@@ -340,20 +351,13 @@ begin
   if assigned(CurrentProject) and (MediaPlayer1.State = TMediaState.Playing)
   then
   begin
-    if (CurrentTime >= MediaPlayer1.Duration) then
+    if (CurrentTime >= VideoDuration) then
     begin
       btnPlayPauseClick(Sender);
-      CurrentTime := MediaPlayer1.Duration;
+      CurrentTime := VideoDuration;
     end
     else
-    begin
-      FTrackingFromMediaPlayer := true;
-      try
-        tbVideo.Value := CurrentTime / mediatimescale;
-      finally
-        FTrackingFromMediaPlayer := false;
-      end;
-    end;
+      UpdateTrackbarValue(CurrentTime);
   end;
 end;
 
@@ -455,6 +459,49 @@ begin
   url_Open_In_Browser(AURL);
 end;
 
+function TfrmMain.SecondesToHHMMSS(const DureeEnSecondes: int64): string;
+  function ToString2(nb: int64): string;
+  begin
+    result := nb.ToString;
+    while (result.length < 2) do
+      result := '0' + result;
+  end;
+
+var
+  heures, minutes, secondes: int64;
+begin
+  secondes := DureeEnSecondes mod 60;
+  minutes := DureeEnSecondes div 60;
+  heures := minutes div 60;
+  minutes := minutes mod 60;
+  result := ToString2(heures) + ':' + ToString2(minutes) + ':' +
+    ToString2(secondes);
+end;
+
+function TfrmMain.SecondesToHHMMSS(const DureeEnSecondes: double): string;
+var
+  DES: string;
+begin
+  DES := DureeEnSecondes.ToString;
+  if (DES.IndexOfAny(['.', ',']) > 0) then
+    result := SecondesToHHMMSS(trunc(DureeEnSecondes)) +
+      DES.Substring(DES.IndexOfAny(['.', ',']))
+  else
+    result := SecondesToHHMMSS(trunc(DureeEnSecondes));
+end;
+
+procedure TfrmMain.UpdateTrackbarValue(const CurTime: int64);
+begin
+  FTrackingFromMediaPlayer := true;
+  try
+    tbVideo.Value := CurTime / mediatimescale;
+    lblStatus.Text := SecondesToHHMMSS(tbVideo.Value) + ' / ' +
+      SecondesToHHMMSS(VideoDurationSecondes);
+  finally
+    FTrackingFromMediaPlayer := false;
+  end;
+end;
+
 procedure TfrmMain.SetCurrentProject(const Value: TVICUProject);
 begin
   FCurrentProject := Value;
@@ -462,12 +509,14 @@ begin
   if not assigned(FCurrentProject) then
   begin
     lProject.Visible := false;
+    lblStatus.Text := '';
     CheckVideoPositionTimer.Enabled := false;
     TMessageManager.DefaultManager.SendMessage(self,
       TVICUProjectHasChangedMessage.Create(FCurrentProject));
   end
   else
   begin
+    VideoDuration := 0;
     MediaPlayer1.FileName := FCurrentProject.SourceVideoFilePath;
     MediaPlayer1.Play;
     tthread.CreateAnonymousThread(
@@ -486,6 +535,7 @@ begin
               if (MediaPlayer1.Duration > 0) then
               begin
                 MediaPlayer1.Stop;
+                VideoDuration := MediaPlayer1.Duration;
                 ok := true;
               end;
             end);
@@ -510,9 +560,8 @@ begin
               // 30 FPS
               CheckVideoPositionTimer.Enabled := true;
 
-              // TODO : adapter la taille de la trackbar à la durée du fichier
               tbVideo.min := 0;
-              tbVideo.Max := MediaPlayer1.Duration / mediatimescale;
+              tbVideo.Max := VideoDurationSecondes;
               CurrentTime := 0;
 
               // TODO : afficher la liste des marqueurs
@@ -531,18 +580,13 @@ var
 begin
   if (Value < 1) then
     ct := 0
-  else if (Value > MediaPlayer1.Duration) then
-    ct := MediaPlayer1.Duration
+  else if (Value > VideoDuration) then
+    ct := VideoDuration
   else
     ct := Value;
 
   MediaPlayer1.CurrentTime := ct;
-  FTrackingFromMediaPlayer := true;
-  try
-    tbVideo.Value := ct / mediatimescale;
-  finally
-    FTrackingFromMediaPlayer := false;
-  end;
+  UpdateTrackbarValue(ct);
 
   // TODO : à retirer si on arrive à résoudre le positionnnement autrement
   // if not(MediaPlayer1.State = TMediaState.Playing) then
@@ -550,6 +594,12 @@ begin
   // MediaPlayer1.Play;
   // MediaPlayer1.Stop;
   // end;
+end;
+
+procedure TfrmMain.SetVideoDuration(const Value: int64);
+begin
+  FVideoDuration := Value;
+  FVideoDurationSecondes := Value / mediatimescale;
 end;
 
 procedure TfrmMain.SubscribeToProjectChangedMessage;
@@ -581,8 +631,6 @@ begin
       btnProjectNew.Visible := btnProjectOpen.Visible;
       btnProjectClose.Visible := not btnProjectOpen.Visible;
       btnProjectOptions.Visible := not btnProjectOpen.Visible;
-
-      lblStatus.Text := '';
 
       // Since no available options for the project, we hide the menu items and buttons
       btnProjectOptions.Visible := false;
