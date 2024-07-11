@@ -197,7 +197,7 @@ object frmOptions: TfrmOptions
       Size.Width = 620.000000000000000000
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
-      Text = 'Default exported videos folder'
+      Text = 'Default videos FPS'
       TabOrder = 8
     end
     object edtDefaultFPS: TEdit
