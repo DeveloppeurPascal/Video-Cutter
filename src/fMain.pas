@@ -88,6 +88,8 @@ type
     lblSourceFile: TLabel;
     tbVideo: TTrackBar;
     CheckVideoPositionTimer: TTimer;
+    tbVolume: TTrackBar;
+    lblVolume: TLabel;
     procedure actQuitExecute(Sender: TObject);
     procedure actAboutExecute(Sender: TObject);
     procedure actProjectOpenExecute(Sender: TObject);
@@ -108,6 +110,7 @@ type
     procedure btnNextFrameClick(Sender: TObject);
     procedure CheckVideoPositionTimerTimer(Sender: TObject);
     procedure tbVideoTracking(Sender: TObject);
+    procedure tbVolumeTracking(Sender: TObject);
   private
     FCurrentProject: TVICUProject;
     FVideoDuration: int64;
@@ -521,6 +524,7 @@ begin
 
   if not assigned(FCurrentProject) then
   begin
+    tconfig.save; // enregistre les options du programme liées à l'écran de projet
     lProject.Visible := false;
     lblStatus.Text := '';
     CheckVideoPositionTimer.Enabled := false;
@@ -576,6 +580,9 @@ begin
               tbVideo.min := 0;
               tbVideo.Max := VideoDurationSecondes;
               CurrentTime := 0;
+
+              tbVolume.Value := tconfig.PlayVolume;
+              MediaPlayer1.Volume := tconfig.PlayVolume / 100;
 
               // TODO : afficher la liste des marqueurs
               // TODO : afficher les tranches (à couper ou conserver)
@@ -653,6 +660,12 @@ begin
     exit;
 
   CurrentTime := round(tbVideo.Value * mediatimescale);
+end;
+
+procedure TfrmMain.tbVolumeTracking(Sender: TObject);
+begin
+  tconfig.PlayVolume := round(tbVolume.Value);
+  MediaPlayer1.Volume := tconfig.PlayVolume / 100;
 end;
 
 initialization
