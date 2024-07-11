@@ -8,7 +8,7 @@ uses
   System.Generics.Collections;
 
 const
-  CProjectFileVersion = 20240708;
+  CProjectFileVersion = 20240711;
 
 type
   TVICUProject = class;
@@ -98,7 +98,7 @@ type
 
   TVICUProject = class
   private const
-    CVersion = 1;
+    CVersion = 2;
 
   var
     FHasChanged: boolean;
@@ -108,6 +108,8 @@ type
     FExportedVideoFilePath: string;
     FVideoParts: TVideoPartList;
     FMarks: TMarkList;
+    FVideoFPS: Integer;
+    procedure SetVideoFPS(const Value: Integer);
     function GetFileName: string;
     procedure SetMarks(const Value: TMarkList);
     procedure SetVideoParts(const Value: TVideoPartList);
@@ -125,6 +127,7 @@ type
       write SetExportedVideoFilePath;
     property VideoParts: TVideoPartList read FVideoParts write SetVideoParts;
     property Marks: TMarkList read FMarks write SetMarks;
+    property VideoFPS: Integer read FVideoFPS write SetVideoFPS;
     procedure LoadFromFile(const AFilePath: string = '');
     procedure LoadFromStream(const AStream: TStream);
     procedure SaveToStream(const AStream: TStream);
@@ -139,7 +142,8 @@ implementation
 uses
   System.IOUtils,
   System.SysUtils,
-  Olf.RTL.Streams;
+  Olf.RTL.Streams,
+  uConfig;
 
 { TMark }
 
@@ -485,6 +489,7 @@ begin
   FExportedVideoFilePath := '';
   FVideoParts := TVideoPartList.Create(self);
   FMarks := TMarkList.Create(self);
+  FVideoFPS := tconfig.DefaultVideoFPS;
 end;
 
 constructor TVICUProject.Create(const AFilePath: string);
@@ -555,6 +560,17 @@ begin
     FExportedVideoFilePath := LoadStringFromStream(AStream);
     FMarks.LoadFromStream(AStream);
     FVideoParts.LoadFromStream(AStream);
+
+    if (Version >= 2) then
+    begin
+      if (AStream.Read(FVideoFPS, sizeof(FVideoFPS)) <> sizeof(FVideoFPS)) then
+        raise exception.Create('Wrong file format.');
+    end
+    else
+    begin
+      FVideoFPS := tconfig.DefaultVideoFPS;
+    end;
+
   finally
     FIsLoading := false;
   end;
@@ -593,6 +609,7 @@ begin
   SaveStringToStream(FExportedVideoFilePath, AStream);
   FMarks.SaveToStream(AStream);
   FVideoParts.SaveToStream(AStream);
+  AStream.Write(FVideoFPS, sizeof(FVideoFPS));
   HasChanged := false;
 end;
 
@@ -633,6 +650,15 @@ begin
   if FSourceVideoFilePath <> Value then
   begin
     FSourceVideoFilePath := Value;
+    HasChanged := true;
+  end;
+end;
+
+procedure TVICUProject.SetVideoFPS(const Value: Integer);
+begin
+  if FVideoFPS <> Value then
+  begin
+    FVideoFPS := Value;
     HasChanged := true;
   end;
 end;
