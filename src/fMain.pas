@@ -308,9 +308,9 @@ end;
 
 procedure TfrmMain.btnNextFrameClick(Sender: TObject);
 var
-  FrameDuration: int64; // we suppose the video is in 30 FPS
+  FrameDuration: int64;
 begin
-  FrameDuration := round((1 / 30) * mediatimescale);
+  FrameDuration := round((1 / tconfig.DefaultVideoFPS) * mediatimescale);
   CurrentTime := CurrentTime + FrameDuration;
 end;
 
@@ -336,9 +336,9 @@ end;
 
 procedure TfrmMain.btnPrevFrameClick(Sender: TObject);
 var
-  FrameDuration: int64; // we suppose the video is in 30 FPS
+  FrameDuration: int64;
 begin
-  FrameDuration := round((1 / 30) * mediatimescale);
+  FrameDuration := round((1 / tconfig.DefaultVideoFPS) * mediatimescale);
   CurrentTime := CurrentTime - FrameDuration;
 end;
 
@@ -561,8 +561,7 @@ begin
               pPause.Visible := false;
               pPlay.Visible := true;
 
-              CheckVideoPositionTimer.interval := round((1 / 30) * 1000);
-              // 30 FPS
+              CheckVideoPositionTimer.interval := round((1 / tconfig.DefaultVideoFPS) * 1000);
               CheckVideoPositionTimer.Enabled := true;
 
               tbVideo.min := 0;
