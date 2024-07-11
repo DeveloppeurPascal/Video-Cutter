@@ -524,7 +524,7 @@ object frmMain: TfrmMain
       end
     end
     object MediaPlayerControl1: TMediaPlayerControl
-      Size.Width = 733.000000000000000000
+      Size.Width = 583.000000000000000000
       Size.Height = 314.000000000000000000
       Size.PlatformDefault = False
       Align = Client
@@ -537,7 +537,7 @@ object frmMain: TfrmMain
         Align = Top
         Margins.Top = -20.000000000000000000
         Position.Y = -20.000000000000000000
-        Size.Width = 733.000000000000000000
+        Size.Width = 583.000000000000000000
         Size.Height = 17.000000000000000000
         Size.PlatformDefault = False
         TextSettings.HorzAlign = Center
@@ -587,6 +587,131 @@ object frmMain: TfrmMain
         TextSettings.HorzAlign = Center
         Text = 'V'
         TabOrder = 72
+      end
+    end
+    object lProjectRight: TLayout
+      Align = Right
+      Position.X = 622.000000000000000000
+      Size.Width = 150.000000000000000000
+      Size.Height = 339.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 6
+      object lbVideoParts: TListBox
+        Align = Client
+        Margins.Left = 5.000000000000000000
+        Margins.Right = 5.000000000000000000
+        Size.Width = 140.000000000000000000
+        Size.Height = 262.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 6
+        DisableFocusEffect = True
+        DefaultItemStyles.ItemStyle = ''
+        DefaultItemStyles.GroupHeaderStyle = ''
+        DefaultItemStyles.GroupFooterStyle = ''
+        ShowCheckboxes = True
+        Sorted = True
+        Viewport.Width = 136.000000000000000000
+        Viewport.Height = 258.000000000000000000
+        object ListBoxItem1: TListBoxItem
+          TabOrder = 0
+          Text = 'ListBoxItem1'
+          OnClick = ListBoxItem1Click
+        end
+      end
+      object lblVideosParts: TLabel
+        Align = Top
+        Margins.Left = 5.000000000000000000
+        Margins.Top = 5.000000000000000000
+        Margins.Right = 5.000000000000000000
+        Margins.Bottom = 5.000000000000000000
+        Position.X = 5.000000000000000000
+        Position.Y = 5.000000000000000000
+        Size.Width = 140.000000000000000000
+        Size.Height = 17.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'Video fragments'
+        TabOrder = 0
+      end
+      object FlowLayout2: TFlowLayout
+        Align = Bottom
+        Position.Y = 289.000000000000000000
+        Size.Width = 150.000000000000000000
+        Size.Height = 50.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 7
+        Justify = Center
+        JustifyLastLine = Center
+        FlowDirection = LeftToRight
+        object btnAddMark: TButton
+          Margins.Left = 5.000000000000000000
+          Margins.Top = 5.000000000000000000
+          Margins.Right = 5.000000000000000000
+          Margins.Bottom = 5.000000000000000000
+          Position.X = 30.000000000000000000
+          Position.Y = 5.000000000000000000
+          Size.Width = 40.000000000000000000
+          Size.Height = 40.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 10
+          TextSettings.Trimming = None
+          OnClick = btnAddMarkClick
+          object pAddMark: TPath
+            Align = Client
+            Data.Path = {
+              0E000000000000000000A0410000604101000000000060410000604101000000
+              000060410000A04101000000000020410000A041010000000000204100006041
+              0100000000008040000060410100000000008040000020410100000000002041
+              0000204101000000000020410000804001000000000060410000804001000000
+              0000604100002041010000000000A04100002041010000000000A04100006041
+              030000000000A04100006041}
+            HitTest = False
+            Margins.Left = 5.000000000000000000
+            Margins.Top = 5.000000000000000000
+            Margins.Right = 5.000000000000000000
+            Margins.Bottom = 5.000000000000000000
+            Size.Width = 30.000000000000000000
+            Size.Height = 30.000000000000000000
+            Size.PlatformDefault = False
+            Stroke.Kind = None
+            WrapMode = Fit
+          end
+        end
+        object btnRemoveMark: TButton
+          Margins.Left = 5.000000000000000000
+          Margins.Top = 5.000000000000000000
+          Margins.Right = 5.000000000000000000
+          Margins.Bottom = 5.000000000000000000
+          Position.X = 80.000000000000000000
+          Position.Y = 5.000000000000000000
+          Size.Width = 40.000000000000000000
+          Size.Height = 40.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 9
+          TextSettings.Trimming = None
+          OnClick = btnRemoveMarkClick
+          object pRemoveMark: TPath
+            Align = Client
+            Data.Path = {
+              1400000000000000000098410000804001000000000078410000804001000000
+              0000684100004040010000000000184100004040010000000000084100008040
+              010000000000A04000008040010000000000A0400000C0400100000000009841
+              0000C040000000000000C04000009841020000000000C04029D6A04102000000
+              5EA7DC400000A84102000000000000410000A84101000000000080410000A841
+              0200000029D688410000A841020000000000904129D6A0410200000000009041
+              0000984101000000000090410000E040010000000000C0400000E04001000000
+              0000C04000009841030000000000C04000009841}
+            HitTest = False
+            Margins.Left = 5.000000000000000000
+            Margins.Top = 5.000000000000000000
+            Margins.Right = 5.000000000000000000
+            Margins.Bottom = 5.000000000000000000
+            Size.Width = 30.000000000000000000
+            Size.Height = 30.000000000000000000
+            Size.PlatformDefault = False
+            Stroke.Kind = None
+            WrapMode = Fit
+          end
+        end
       end
     end
   end
