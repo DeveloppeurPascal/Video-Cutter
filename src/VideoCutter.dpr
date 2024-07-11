@@ -17,7 +17,8 @@ uses
   Olf.RTL.Streams in '..\lib-externes\librairies\src\Olf.RTL.Streams.pas',
   Olf.RTL.Maths.Conversions in '..\lib-externes\librairies\src\Olf.RTL.Maths.Conversions.pas',
   Olf.FMX.SelectDirectory in '..\lib-externes\Delphi-FMXExtend-Library\src\Olf.FMX.SelectDirectory.pas',
-  fOptions in 'fOptions.pas' {frmOptions};
+  fOptions in 'fOptions.pas' {frmOptions},
+  uTools in 'uTools.pas';
 
 {$R *.res}
 
