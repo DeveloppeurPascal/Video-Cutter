@@ -15,6 +15,8 @@ type
     class function GetDefaultSourceVideoFolder: string; static;
     class procedure SetDefaultVideoFPS(const Value: integer); static;
     class function GetDefaultVideoFPS: integer; static;
+    class procedure SetPlayVolume(const Value: byte); static;
+    class function GetPlayVolume: byte; static;
   protected
   public
     class property FFmpegPath: string read GetFFmpegPath write SetFFmpegPath;
@@ -26,6 +28,7 @@ type
       write SetDefaultExportFolder;
     class property DefaultVideoFPS: integer read GetDefaultVideoFPS
       write SetDefaultVideoFPS;
+    class property PlayVolume: byte read GetPlayVolume write SetPlayVolume;
     class procedure Save;
     class procedure Cancel;
   end;
@@ -118,6 +121,11 @@ begin
   result := tparams.getValue('FFmpeg', '');
 end;
 
+class function TConfig.GetPlayVolume: byte;
+begin
+  result := tparams.getValue('Vol', 100);
+end;
+
 class procedure TConfig.Save;
 begin
   tparams.Save;
@@ -146,6 +154,11 @@ end;
 class procedure TConfig.SetFFmpegPath(const Value: string);
 begin
   tparams.setValue('FFmpeg', Value);
+end;
+
+class procedure TConfig.SetPlayVolume(const Value: byte);
+begin
+  tparams.setValue('Vol', Value);
 end;
 
 initialization
