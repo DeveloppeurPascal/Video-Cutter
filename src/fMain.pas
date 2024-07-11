@@ -150,7 +150,8 @@ uses
   Olf.FMX.AboutDialogForm,
   u_urlOpen,
   fOptions,
-  uConfig;
+  uConfig,
+  fProjectOptions;
 
 procedure TfrmMain.actAboutExecute(Sender: TObject);
 begin
@@ -266,8 +267,15 @@ begin
 end;
 
 procedure TfrmMain.actProjectOptionsExecute(Sender: TObject);
+var
+  f: TfrmProjectOptions;
 begin
-  // TODO : à compléter
+  f := TfrmProjectOptions.Create(self, CurrentProject);
+  try
+    f.showmodal;
+  finally
+    f.free;
+  end;
 end;
 
 procedure TfrmMain.actProjectSaveExecute(Sender: TObject);
@@ -310,7 +318,7 @@ procedure TfrmMain.btnNextFrameClick(Sender: TObject);
 var
   FrameDuration: int64;
 begin
-  FrameDuration := round((1 / tconfig.DefaultVideoFPS) * mediatimescale);
+  FrameDuration := round((1 / CurrentProject.VideoFPS) * mediatimescale);
   CurrentTime := CurrentTime + FrameDuration;
 end;
 
@@ -338,7 +346,7 @@ procedure TfrmMain.btnPrevFrameClick(Sender: TObject);
 var
   FrameDuration: int64;
 begin
-  FrameDuration := round((1 / tconfig.DefaultVideoFPS) * mediatimescale);
+  FrameDuration := round((1 / CurrentProject.VideoFPS) * mediatimescale);
   CurrentTime := CurrentTime - FrameDuration;
 end;
 
@@ -561,7 +569,8 @@ begin
               pPause.Visible := false;
               pPlay.Visible := true;
 
-              CheckVideoPositionTimer.interval := round((1 / tconfig.DefaultVideoFPS) * 1000);
+              CheckVideoPositionTimer.interval :=
+                round((1 / CurrentProject.VideoFPS) * 1000);
               CheckVideoPositionTimer.Enabled := true;
 
               tbVideo.min := 0;
@@ -635,10 +644,6 @@ begin
       btnProjectNew.Visible := btnProjectOpen.Visible;
       btnProjectClose.Visible := not btnProjectOpen.Visible;
       btnProjectOptions.Visible := not btnProjectOpen.Visible;
-
-      // Since no available options for the project, we hide the menu items and buttons
-      btnProjectOptions.Visible := false;
-      mnuProject.Visible := false;
     end);
 end;
 
