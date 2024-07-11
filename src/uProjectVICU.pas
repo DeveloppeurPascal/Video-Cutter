@@ -18,19 +18,23 @@ type
 
   TMark = class
   private const
-    CVersion = 1;
+    CVersion = 2;
 
   var
     FProject: TVICUProject;
     FTime: int64;
+    FIsCut: boolean;
+    procedure SetIsCut(const Value: boolean);
     procedure SetTime(const Value: int64);
   protected
   public
     property Time: int64 read FTime write SetTime;
+    property IsCut: boolean read FIsCut write SetIsCut;
     procedure LoadFromStream(const AStream: TStream);
     procedure SaveToStream(const AStream: TStream);
     constructor Create(const AProject: TVICUProject);
     destructor Destroy; override;
+    procedure Delete(const AutoFree: boolean = true);
   end;
 
   TMarkList = class(TObjectList<TMark>)
@@ -55,47 +59,6 @@ type
     procedure Clear; inline;
   end;
 
-  TVideoPart = class
-  private const
-    CVersion = 1;
-
-  var
-    FProject: TVICUProject;
-    FEndMark: TMark;
-    FStartMark: TMark;
-    FIsCut: boolean;
-    procedure SetEndMark(const Value: TMark);
-    procedure SetIsCut(const Value: boolean);
-    procedure SetStartMark(const Value: TMark);
-  protected
-  public
-    property StartMark: TMark read FStartMark write SetStartMark;
-    property EndMark: TMark read FEndMark write SetEndMark;
-    property IsCut: boolean read FIsCut write SetIsCut;
-    procedure LoadFromStream(const AStream: TStream);
-    procedure SaveToStream(const AStream: TStream);
-    constructor Create(const AProject: TVICUProject);
-    destructor Destroy; override;
-  end;
-
-  TVideoPartList = class(TObjectList<TVideoPart>)
-  private const
-    CVersion = 1;
-
-  var
-    FProject: TVICUProject;
-  protected
-  public
-    procedure LoadFromStream(const AStream: TStream);
-    procedure SaveToStream(const AStream: TStream);
-    constructor Create(const AProject: TVICUProject);
-    destructor Destroy; override;
-    function Add(const Value: TVideoPart): Integer; inline;
-    procedure Delete(Index: Integer); inline;
-    function Remove(const Value: TVideoPart): Integer; inline;
-    procedure Clear; inline;
-  end;
-
   TVICUProject = class
   private const
     CVersion = 2;
@@ -106,13 +69,11 @@ type
     FFilePath: string;
     FSourceVideoFilePath: string;
     FExportedVideoFilePath: string;
-    FVideoParts: TVideoPartList;
     FMarks: TMarkList;
     FVideoFPS: Integer;
     procedure SetVideoFPS(const Value: Integer);
     function GetFileName: string;
     procedure SetMarks(const Value: TMarkList);
-    procedure SetVideoParts(const Value: TVideoPartList);
     procedure SetExportedVideoFilePath(const Value: string);
     procedure SetHasChanged(const Value: boolean);
     procedure SetSourceVideoFilePath(const Value: string);
@@ -125,7 +86,6 @@ type
       write SetSourceVideoFilePath;
     property ExportedVideoFilePath: string read FExportedVideoFilePath
       write SetExportedVideoFilePath;
-    property VideoParts: TVideoPartList read FVideoParts write SetVideoParts;
     property Marks: TMarkList read FMarks write SetMarks;
     property VideoFPS: Integer read FVideoFPS write SetVideoFPS;
     procedure LoadFromFile(const AFilePath: string = '');
@@ -152,6 +112,15 @@ begin
   inherited Create;
   FProject := AProject;
   FTime := 0;
+  FIsCut := false;
+end;
+
+procedure TMark.Delete(const AutoFree: boolean);
+begin
+  if AutoFree then
+    FProject.Marks.Remove(self)
+  else
+    FProject.Marks.Extract(self);
 end;
 
 destructor TMark.Destroy;
@@ -171,7 +140,17 @@ begin
       ('This project file is too recent. Please upgrade this program if you wish to load it.');
 
   if (AStream.Read(FTime, sizeof(FTime)) <> sizeof(FTime)) then
-    raise exception.Create('Wrong file format (undefined Mark Time).');
+    raise exception.Create('Wrong file format.');
+
+  if (Version >= 2) then
+  begin
+    if (AStream.Read(FIsCut, sizeof(FIsCut)) <> sizeof(FIsCut)) then
+      raise exception.Create('Wrong file format.');
+  end
+  else
+  begin
+    FIsCut := false;
+  end;
 end;
 
 procedure TMark.SaveToStream(const AStream: TStream);
@@ -181,6 +160,17 @@ begin
   Version := CVersion;
   AStream.Write(Version, sizeof(Version));
   AStream.Write(FTime, sizeof(FTime));
+  AStream.Write(FIsCut, sizeof(FIsCut));
+end;
+
+procedure TMark.SetIsCut(const Value: boolean);
+begin
+  if FIsCut <> Value then
+  begin
+    FIsCut := Value;
+    if assigned(FProject) then
+      FProject.HasChanged := true;
+  end;
 end;
 
 procedure TMark.SetTime(const Value: int64);
@@ -213,6 +203,8 @@ constructor TMarkList.Create(const AProject: TVICUProject);
 begin
   inherited Create;
   FProject := AProject;
+  // On doit au moins avoir une marque au début du fichier.
+  GetMark(0, true);
 end;
 
 procedure TMarkList.Delete(Index: Integer);
@@ -276,7 +268,7 @@ var
   Mark: TMark;
 begin
   if (AStream.Read(Version, sizeof(Version)) <> sizeof(Version)) then
-    raise exception.Create('Wrong file format (undefined mark record).');
+    raise exception.Create('Wrong file format (undefined mark list).');
 
   if (Version > CVersion) then
     raise exception.Create
@@ -285,12 +277,16 @@ begin
   if (AStream.Read(Nb, sizeof(Nb)) <> sizeof(Nb)) then
     raise exception.Create('Wrong file format (no mark list).');
 
+  Clear;
   for I := 1 to Nb do
   begin
     Mark := TMark.Create(FProject);
     Mark.LoadFromStream(AStream);
     Add(Mark);
   end;
+
+  // On doit au moins avoir une marque au début du fichier.
+  GetMark(0, true);
 end;
 
 function TMarkList.Remove(const Value: TMark): Integer;
@@ -314,169 +310,6 @@ begin
     Mark.SaveToStream(AStream);
 end;
 
-{ TVideoPart }
-
-constructor TVideoPart.Create(const AProject: TVICUProject);
-begin
-  inherited Create;
-  FProject := AProject;
-  FEndMark := nil;
-  FStartMark := nil;
-  FIsCut := false;
-end;
-
-destructor TVideoPart.Destroy;
-begin
-  inherited;
-end;
-
-procedure TVideoPart.LoadFromStream(const AStream: TStream);
-var
-  Version: byte;
-  Time: int64;
-begin
-  if not assigned(FProject) then
-    raise exception.Create('Did you lost the project ?');
-
-  if (AStream.Read(Version, sizeof(Version)) <> sizeof(Version)) then
-    raise exception.Create('Wrong file format (undefined video part record).');
-
-  if (Version > CVersion) then
-    raise exception.Create
-      ('This project file is too recent. Please upgrade this program if you wish to load it.');
-
-  if (AStream.Read(Time, sizeof(Time)) <> sizeof(Time)) then
-    raise exception.Create('Wrong file format (undefined start time).');
-  FStartMark := FProject.Marks.GetMark(Time, true);
-
-  if (AStream.Read(Time, sizeof(Time)) <> sizeof(Time)) then
-    raise exception.Create('Wrong file format (undefined end time).');
-  FEndMark := FProject.Marks.GetMark(Time, true);
-
-  if (AStream.Read(FIsCut, sizeof(FIsCut)) <> sizeof(FIsCut)) then
-    raise exception.Create('Wrong file format (undefined cut status).');
-end;
-
-procedure TVideoPart.SaveToStream(const AStream: TStream);
-var
-  Version: byte;
-begin
-  Version := CVersion;
-  AStream.Write(Version, sizeof(Version));
-  AStream.Write(FStartMark.Time, sizeof(FStartMark.Time));
-  AStream.Write(FEndMark.Time, sizeof(FEndMark.Time));
-  AStream.Write(FIsCut, sizeof(FIsCut));
-end;
-
-procedure TVideoPart.SetEndMark(const Value: TMark);
-begin
-  if FEndMark <> Value then
-  begin
-    FEndMark := Value;
-    if assigned(FProject) then
-      FProject.HasChanged := true;
-  end;
-end;
-
-procedure TVideoPart.SetIsCut(const Value: boolean);
-begin
-  if FIsCut <> Value then
-  begin
-    FIsCut := Value;
-    if assigned(FProject) then
-      FProject.HasChanged := true;
-  end;
-end;
-
-procedure TVideoPart.SetStartMark(const Value: TMark);
-begin
-  if FStartMark <> Value then
-  begin
-    FStartMark := Value;
-    if assigned(FProject) then
-      FProject.HasChanged := true;
-  end;
-end;
-
-{ TVideoPartList }
-
-function TVideoPartList.Add(const Value: TVideoPart): Integer;
-begin
-  result := inherited Add(Value);
-  if assigned(FProject) then
-    FProject.HasChanged := true;
-end;
-
-procedure TVideoPartList.Clear;
-begin
-  inherited Clear;
-  if assigned(FProject) then
-    FProject.HasChanged := true;
-end;
-
-constructor TVideoPartList.Create(const AProject: TVICUProject);
-begin
-  inherited Create;
-  FProject := AProject;
-end;
-
-procedure TVideoPartList.Delete(Index: Integer);
-begin
-  inherited Delete(index);
-  if assigned(FProject) then
-    FProject.HasChanged := true;
-end;
-
-destructor TVideoPartList.Destroy;
-begin
-  inherited;
-end;
-
-procedure TVideoPartList.LoadFromStream(const AStream: TStream);
-var
-  Version: byte;
-  I, Nb: int64;
-  VideoPart: TVideoPart;
-begin
-  if (AStream.Read(Version, sizeof(Version)) <> sizeof(Version)) then
-    raise exception.Create('Wrong file format (undefined mark record).');
-
-  if (Version > CVersion) then
-    raise exception.Create
-      ('This project file is too recent. Please upgrade this program if you wish to load it.');
-
-  if (AStream.Read(Nb, sizeof(Nb)) <> sizeof(Nb)) then
-    raise exception.Create('Wrong file format (no mark list).');
-
-  for I := 1 to Nb do
-  begin
-    VideoPart := TVideoPart.Create(FProject);
-    VideoPart.LoadFromStream(AStream);
-    Add(VideoPart);
-  end;
-end;
-
-function TVideoPartList.Remove(const Value: TVideoPart): Integer;
-begin
-  result := inherited Remove(Value);
-  if assigned(FProject) then
-    FProject.HasChanged := true;
-end;
-
-procedure TVideoPartList.SaveToStream(const AStream: TStream);
-var
-  Version: byte;
-  Nb: int64;
-  VideoPart: TVideoPart;
-begin
-  Version := CVersion;
-  AStream.Write(Version, sizeof(Version));
-  Nb := count;
-  AStream.Write(Nb, sizeof(Nb));
-  for VideoPart in self do
-    VideoPart.SaveToStream(AStream);
-end;
-
 { TVICUProject }
 
 constructor TVICUProject.Create;
@@ -487,7 +320,6 @@ begin
   FFilePath := '';
   FSourceVideoFilePath := '';
   FExportedVideoFilePath := '';
-  FVideoParts := TVideoPartList.Create(self);
   FMarks := TMarkList.Create(self);
   FVideoFPS := tconfig.DefaultVideoFPS;
 end;
@@ -500,7 +332,6 @@ end;
 
 destructor TVICUProject.Destroy;
 begin
-  FVideoParts.free;
   FMarks.free;
   inherited;
 end;
@@ -559,7 +390,6 @@ begin
     FSourceVideoFilePath := LoadStringFromStream(AStream);
     FExportedVideoFilePath := LoadStringFromStream(AStream);
     FMarks.LoadFromStream(AStream);
-    FVideoParts.LoadFromStream(AStream);
 
     if (Version >= 2) then
     begin
@@ -608,7 +438,6 @@ begin
   SaveStringToStream(FSourceVideoFilePath, AStream);
   SaveStringToStream(FExportedVideoFilePath, AStream);
   FMarks.SaveToStream(AStream);
-  FVideoParts.SaveToStream(AStream);
   AStream.Write(FVideoFPS, sizeof(FVideoFPS));
   HasChanged := false;
 end;
@@ -661,11 +490,6 @@ begin
     FVideoFPS := Value;
     HasChanged := true;
   end;
-end;
-
-procedure TVICUProject.SetVideoParts(const Value: TVideoPartList);
-begin
-  FVideoParts := Value;
 end;
 
 end.
