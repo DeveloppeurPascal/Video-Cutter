@@ -13,6 +13,8 @@ type
     class function GetDefaultExportFolder: string; static;
     class function GetDefaultProjectFolder: string; static;
     class function GetDefaultSourceVideoFolder: string; static;
+    class procedure SetDefaultVideoFPS(const Value: integer); static;
+    class function GetDefaultVideoFPS: integer; static;
   protected
   public
     class property FFmpegPath: string read GetFFmpegPath write SetFFmpegPath;
@@ -22,6 +24,8 @@ type
       read GetDefaultSourceVideoFolder write SetDefaultSourceVideoFolder;
     class property DefaultExportFolder: string read GetDefaultExportFolder
       write SetDefaultExportFolder;
+    class property DefaultVideoFPS: integer read GetDefaultVideoFPS
+      write SetDefaultVideoFPS;
     class procedure Save;
     class procedure Cancel;
   end;
@@ -104,6 +108,11 @@ begin
   result := tparams.getValue('DSVF', tpath.GetMoviesPath);
 end;
 
+class function TConfig.GetDefaultVideoFPS: integer;
+begin
+  result := tparams.getValue('DFPS', 30);
+end;
+
 class function TConfig.GetFFmpegPath: string;
 begin
   result := tparams.getValue('FFmpeg', '');
@@ -127,6 +136,11 @@ end;
 class procedure TConfig.SetDefaultSourceVideoFolder(const Value: string);
 begin
   tparams.setValue('DSVF', Value);
+end;
+
+class procedure TConfig.SetDefaultVideoFPS(const Value: integer);
+begin
+  tparams.setValue('DFPS', Value);
 end;
 
 class procedure TConfig.SetFFmpegPath(const Value: string);
