@@ -524,7 +524,9 @@ begin
 
   if not assigned(FCurrentProject) then
   begin
-    tconfig.save; // enregistre les options du programme liées à l'écran de projet
+    if MediaPlayer1.State = TMediaState.Playing then
+      MediaPlayer1.Stop;
+    tconfig.save; // sauve les options du programme liées à l'écran de projet
     lProject.Visible := false;
     lblStatus.Text := '';
     CheckVideoPositionTimer.Enabled := false;
