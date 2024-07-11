@@ -186,6 +186,34 @@ object frmOptions: TfrmOptions
         OnClick = btnDefaultExportFolderClick
       end
     end
+    object lblDefaultFPS: TLabel
+      Align = Top
+      FocusControl = edtDefaultFPS
+      Margins.Left = 10.000000000000000000
+      Margins.Top = 10.000000000000000000
+      Margins.Right = 10.000000000000000000
+      Position.X = 10.000000000000000000
+      Position.Y = 266.000000000000000000
+      Size.Width = 620.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'Default exported videos folder'
+      TabOrder = 8
+    end
+    object edtDefaultFPS: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      Align = Top
+      TabOrder = 9
+      Position.X = 10.000000000000000000
+      Position.Y = 288.000000000000000000
+      Margins.Left = 10.000000000000000000
+      Margins.Top = 5.000000000000000000
+      Margins.Right = 10.000000000000000000
+      Margins.Bottom = 10.000000000000000000
+      Size.Width = 620.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+    end
   end
   object GridPanelLayout1: TGridPanelLayout
     Align = Bottom
@@ -260,7 +288,7 @@ object frmOptions: TfrmOptions
   end
   object OlfSelectDirectoryDialog1: TOlfSelectDirectoryDialog
     Root = ''
-    Left = 80
-    Top = 272
+    Left = 488
+    Top = 112
   end
 end

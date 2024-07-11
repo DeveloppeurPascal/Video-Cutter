@@ -40,6 +40,8 @@ type
     edtDefaultExportFolder: TEdit;
     btnDefaultExportFolder: TEllipsesEditButton;
     OlfSelectDirectoryDialog1: TOlfSelectDirectoryDialog;
+    lblDefaultFPS: TLabel;
+    edtDefaultFPS: TEdit;
     procedure btnFFmpegDownloadClick(Sender: TObject);
     procedure btnFFmpegPathChooseClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
@@ -190,6 +192,7 @@ begin
   edtDefaultProjectFolder.TagString := tconfig.DefaultProjectFolder;
   edtDefaultSourceVideoFolder.TagString := tconfig.DefaultSourceVideoFolder;
   edtDefaultExportFolder.TagString := tconfig.DefaultExportFolder;
+  edtDefaultFPS.TagString := tconfig.DefaultVideoFPS.ToString;
 
   for i := 0 to VertScrollBox1.Content.ChildrenCount - 1 do
     if VertScrollBox1.Content.Children[i] is TEdit then
@@ -205,6 +208,7 @@ begin
   tconfig.DefaultSourceVideoFolder := edtDefaultSourceVideoFolder.Text;
   tconfig.DefaultExportFolder := edtDefaultExportFolder.Text;
   tconfig.FFmpegPath := edtFFmpegPath.Text;
+  tconfig.DefaultVideoFPS := edtDefaultFPS.Text.ToInteger;
   tconfig.Save;
 
   InitConfigFields;
