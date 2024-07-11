@@ -12,11 +12,12 @@ uses
   u_urlOpen in '..\lib-externes\librairies\src\u_urlOpen.pas',
   uProjectVICU in 'uProjectVICU.pas',
   DOSCommand in 'DOSCommand.pas',
-  fOptions in 'fOptions.pas' {frmOptions},
+  fProjectOptions in 'fProjectOptions.pas' {frmProjectOptions},
   uConfig in 'uConfig.pas',
   Olf.RTL.Streams in '..\lib-externes\librairies\src\Olf.RTL.Streams.pas',
   Olf.RTL.Maths.Conversions in '..\lib-externes\librairies\src\Olf.RTL.Maths.Conversions.pas',
-  Olf.FMX.SelectDirectory in '..\lib-externes\Delphi-FMXExtend-Library\src\Olf.FMX.SelectDirectory.pas';
+  Olf.FMX.SelectDirectory in '..\lib-externes\Delphi-FMXExtend-Library\src\Olf.FMX.SelectDirectory.pas',
+  fOptions in 'fOptions.pas' {frmOptions};
 
 {$R *.res}
 
