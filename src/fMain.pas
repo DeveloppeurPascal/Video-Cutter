@@ -485,10 +485,14 @@ var
 begin
   DES := DureeEnSecondes.ToString;
   if (DES.IndexOfAny(['.', ',']) > 0) then
-    result := SecondesToHHMMSS(trunc(DureeEnSecondes)) +
-      DES.Substring(DES.IndexOfAny(['.', ',']))
+  begin
+    result := SecondesToHHMMSS(trunc(DureeEnSecondes)) + ',' +
+      DES.Substring(DES.IndexOfAny(['.', ',']) + 1, 3);
+    while result.Substring(result.IndexOf(',') + 1).length < 3 do
+      result := result + '0';
+  end
   else
-    result := SecondesToHHMMSS(trunc(DureeEnSecondes));
+    result := SecondesToHHMMSS(trunc(DureeEnSecondes)) + ',000';
 end;
 
 procedure TfrmMain.UpdateTrackbarValue(const CurTime: int64);
