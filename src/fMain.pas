@@ -757,7 +757,7 @@ begin
   if assigned(Value) then
   begin
     FMark := Value;
-    Text := SecondesToHHMMSS(FMark.Time);
+    Text := SecondesToHHMMSS(FMark.Time / mediatimescale);
     IsChecked := not FMark.IsCut;
   end
   else
