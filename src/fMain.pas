@@ -347,18 +347,13 @@ begin
       MarkItem := TMarkItem.Create(self);
       MarkItem.Mark := Mark;
       lbVideoParts.AddObject(MarkItem);
-      lbVideoParts.Repaint; // TODO : pas censé être nécessaire
     end;
   end;
 end;
 
 procedure TfrmMain.btnAddMarkClick(Sender: TObject);
 begin
-  if not assigned(FCurrentProject) then
-    raise exception.Create('Project needed !');
-
-  if not assigned(FCurrentProject.Marks.GetMark(CurrentTime)) then
-    AddMark(CurrentTime);
+  AddMark(CurrentTime);
 end;
 
 procedure TfrmMain.btnGotoEndClick(Sender: TObject);
@@ -541,18 +536,21 @@ var
   Mark: TMark;
   i: integer;
 begin
-  for i := lbVideoParts.ChildrenCount - 1 downto 0 do
-    if lbVideoParts.ListItems[i] is TListBoxItem then
-      lbVideoParts.ListItems[i].free;
+  lbVideoParts.clear;
 
   if not assigned(CurrentProject) then
     raise exception.Create('No project opened.');
 
-  for Mark in CurrentProject.Marks do
-  begin
-    item := TMarkItem.Create(self);
-    item.Mark := Mark;
-    lbVideoParts.AddObject(item);
+  lbVideoParts.BeginUpdate;
+  try
+    for Mark in CurrentProject.Marks do
+    begin
+      item := TMarkItem.Create(self);
+      item.Mark := Mark;
+      lbVideoParts.AddObject(item);
+    end;
+  finally
+    lbVideoParts.EndUpdate;
   end;
 end;
 
@@ -734,7 +732,7 @@ end;
 
 procedure TMarkItem.CheckboxChange(Sender: TObject);
 begin
-  mark.IsCut := not mark.IsCut;
+  Mark.IsCut := not Mark.IsCut;
 end;
 
 constructor TMarkItem.Create(AOwner: TComponent);
