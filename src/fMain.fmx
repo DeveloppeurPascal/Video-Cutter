@@ -720,11 +720,11 @@ object frmMain: TfrmMain
         OnTracking = tbVolumeTracking
       end
       object lblVol0: TLabel
-        Align = Top
+        Align = Bottom
         Margins.Left = 5.000000000000000000
         Margins.Right = 5.000000000000000000
         Position.X = 5.000000000000000000
-        Position.Y = 26.000000000000000000
+        Position.Y = 322.000000000000000000
         Size.Width = 30.000000000000000000
         Size.Height = 17.000000000000000000
         Size.PlatformDefault = False
@@ -733,12 +733,12 @@ object frmMain: TfrmMain
         TabOrder = 73
       end
       object lblVol100: TLabel
-        Align = Bottom
+        Align = Top
         Margins.Left = 5.000000000000000000
         Margins.Right = 5.000000000000000000
         Margins.Bottom = 5.000000000000000000
         Position.X = 5.000000000000000000
-        Position.Y = 317.000000000000000000
+        Position.Y = 26.000000000000000000
         Size.Width = 30.000000000000000000
         Size.Height = 17.000000000000000000
         Size.PlatformDefault = False
