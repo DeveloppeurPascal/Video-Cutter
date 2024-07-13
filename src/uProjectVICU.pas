@@ -66,6 +66,7 @@ type
   var
     FHasChanged: boolean;
     FIsLoading: boolean;
+    FIsCloning: boolean;
     FFilePath: string;
     FSourceVideoFilePath: string;
     FExportedVideoFilePath: string;
@@ -95,6 +96,7 @@ type
     constructor Create; overload;
     constructor Create(const AFilePath: string); overload;
     destructor Destroy; override;
+    function Clone: TVICUProject;
   end;
 
 implementation
@@ -317,11 +319,32 @@ begin
   inherited;
   FHasChanged := false;
   FIsLoading := false;
+  FIsCloning := false;
   FFilePath := '';
   FSourceVideoFilePath := '';
   FExportedVideoFilePath := '';
   FMarks := TMarkList.Create(self);
   FVideoFPS := tconfig.DefaultVideoFPS;
+end;
+
+function TVICUProject.Clone: TVICUProject;
+var
+  ms: TMemoryStream;
+begin
+  FIsCloning := true;
+  try
+    result := TVICUProject.Create;
+    ms := TMemoryStream.Create;
+    try
+      SaveToStream(ms);
+      ms.Position := 0;
+      result.LoadFromStream(ms);
+    finally
+      ms.free;
+    end;
+  finally
+    FIsCloning := false;
+  end;
 end;
 
 constructor TVICUProject.Create(const AFilePath: string);
@@ -439,7 +462,9 @@ begin
   SaveStringToStream(FExportedVideoFilePath, AStream);
   FMarks.SaveToStream(AStream);
   AStream.Write(FVideoFPS, sizeof(FVideoFPS));
-  HasChanged := false;
+
+  if not FIsCloning then
+    HasChanged := false;
 end;
 
 procedure TVICUProject.SetExportedVideoFilePath(const Value: string);
