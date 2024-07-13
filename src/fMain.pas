@@ -25,7 +25,8 @@ uses
   FMX.Media,
   uProjectVICU,
   FMX.Objects,
-  FMX.ListBox;
+  FMX.ListBox,
+  uCutterWorker;
 
 type
   TfrmMain = class(TForm)
@@ -64,8 +65,8 @@ type
     actOptions: TAction;
     MediaPlayer1: TMediaPlayer;
     odVICUProject: TOpenDialog;
-    scExportedVideo: TSaveDialog;
-    svVICUProject: TSaveDialog;
+    sdExportedVideo: TSaveDialog;
+    sdVICUProject: TSaveDialog;
     odVideoFile: TOpenDialog;
     btnProjectNew: TButton;
     lProject: TLayout;
@@ -103,6 +104,12 @@ type
     Layout1: TLayout;
     lblVol0: TLabel;
     lblVol100: TLabel;
+    AniIndicator1: TAniIndicator;
+    btnProjectExport: TButton;
+    mnuProjectExport: TMenuItem;
+    actProjectExport: TAction;
+    GridPanelLayout1: TGridPanelLayout;
+    lblWaitingListStatus: TLabel;
     procedure actQuitExecute(Sender: TObject);
     procedure actAboutExecute(Sender: TObject);
     procedure actProjectOpenExecute(Sender: TObject);
@@ -129,6 +136,8 @@ type
     procedure lbVideoPartsChangeCheck(Sender: TObject);
     procedure lbVideoPartsItemClick(const Sender: TCustomListBox;
       const Item: TListBoxItem);
+    procedure actProjectExportExecute(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     FCurrentProject: TVICUProject;
     FVideoDuration: int64;
@@ -138,11 +147,15 @@ type
     function GetCurrentTime: int64;
     procedure UpdateTrackbarValue(const CurTime: int64);
     procedure SetVideoDuration(const Value: int64);
+    procedure SetWaitingListCount(const Value: nativeint);
   protected
     FTrackingFromMediaPlayer: Boolean;
+    FCuttingWorker: TCuttingWorker;
     property CurrentTime: int64 read GetCurrentTime write SetCurrentTime;
     property VideoDuration: int64 read FVideoDuration write SetVideoDuration;
     property VideoDurationSecondes: double read FVideoDurationSecondes;
+    property WaitingListCount: nativeint write SetWaitingListCount;
+    procedure AddLog(Const Text: string);
     procedure InitMainFormCaption;
     procedure InitAboutDialogDescriptionAndLicense;
     procedure InitMainMenuForMacOS;
@@ -234,6 +247,35 @@ begin
   end;
 end;
 
+procedure TfrmMain.actProjectExportExecute(Sender: TObject);
+begin
+  if not assigned(CurrentProject) then
+    exit;
+
+  // TODO : proposer un autoenregistrement du projet dans les options du programme ou voir si on pose la question
+
+  if not CurrentProject.ExportedVideoFilePath.IsEmpty then
+  begin
+    sdExportedVideo.InitialDir := TPath.GetDirectoryName
+      (CurrentProject.ExportedVideoFilePath);
+{$IFDEF MACOS}
+    sdExportedVideo.FileName :=
+      TPath.GetFileName(CurrentProject.ExportedVideoFilePath);
+{$ELSE}
+    // TODO : à contrôler sur Windows et Linux
+    sdExportedVideo.FileName := CurrentProject.ExportedVideoFilePath;
+{$ENDIF}
+  end
+  else if sdExportedVideo.InitialDir.IsEmpty then
+    sdExportedVideo.InitialDir := tconfig.DefaultExportFolder;
+
+  if sdExportedVideo.Execute and (sdExportedVideo.FileName <> '') then
+  begin
+    CurrentProject.ExportedVideoFilePath := sdExportedVideo.FileName;
+    FCuttingWorker.AddToQueue(CurrentProject.Clone);
+  end;
+end;
+
 procedure TfrmMain.actProjectNewExecute(Sender: TObject);
 var
   Project: TVICUProject;
@@ -319,17 +361,22 @@ begin
     CurrentProject.SaveToFile
   else
   begin
-    if svVICUProject.InitialDir.IsEmpty then
-      svVICUProject.InitialDir := tconfig.DefaultProjectFolder;
+    if sdVICUProject.InitialDir.IsEmpty then
+      sdVICUProject.InitialDir := tconfig.DefaultProjectFolder;
 
-    if svVICUProject.Execute and (svVICUProject.FileName <> '') then
-      CurrentProject.SaveToFile(svVICUProject.FileName);
+    if sdVICUProject.Execute and (sdVICUProject.FileName <> '') then
+      CurrentProject.SaveToFile(sdVICUProject.FileName);
   end;
 end;
 
 procedure TfrmMain.actQuitExecute(Sender: TObject);
 begin
   close;
+end;
+
+procedure TfrmMain.AddLog(const Text: string);
+begin
+  // TODO : à compléter
 end;
 
 procedure TfrmMain.AddMark(const ATime: int64);
@@ -439,9 +486,26 @@ begin
   end;
 end;
 
+procedure TfrmMain.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  FCuttingWorker.Stop;
+  sleep(1000); // wait for thread termination
+end;
+
 procedure TfrmMain.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 begin
-  if assigned(CurrentProject) then
+  if AniIndicator1.Enabled then
+  begin
+    CanClose := false;
+    ShowMessage('Waiting for current waiting list is empty.');
+    tthread.ForceQueue(nil,
+      procedure
+      begin
+        sleep(1000);
+        close;
+      end);
+  end
+  else if assigned(CurrentProject) then
   begin
     actProjectCloseExecute(Sender);
     CanClose := not assigned(CurrentProject);
@@ -458,6 +522,34 @@ begin
   InitMainFormCaption;
   InitAboutDialogDescriptionAndLicense;
   InitMainMenuForMacOS;
+
+  WaitingListCount := 0;
+
+  FCuttingWorker := TCuttingWorker.Create;
+  FCuttingWorker.OnWorkStart := procedure
+    begin
+      AniIndicator1.Visible := true;
+      AniIndicator1.Enabled := true;
+    end;
+  FCuttingWorker.OnWorkEnd := procedure
+    begin
+      AniIndicator1.Enabled := false;
+      AniIndicator1.Visible := false;
+    end;
+  FCuttingWorker.OnWaitingListCountChange := procedure(Count: nativeint)
+    begin
+      WaitingListCount := Count;
+    end;
+  FCuttingWorker.onError := procedure(Text: string)
+    begin
+      AddLog('***** ERROR *****');
+      AddLog(Text);
+    end;
+  FCuttingWorker.onLog := procedure(Text: string)
+    begin
+      AddLog(Text);
+    end;
+  FCuttingWorker.Start;
 end;
 
 function TfrmMain.GetCurrentTime: int64;
@@ -658,7 +750,7 @@ begin
               TMessageManager.DefaultManager.SendMessage(self,
                 TVICUProjectHasChangedMessage.Create(FCurrentProject));
             end);
-      end).start;
+      end).Start;
   end;
 
 end;
@@ -689,6 +781,11 @@ procedure TfrmMain.SetVideoDuration(const Value: int64);
 begin
   FVideoDuration := Value;
   FVideoDurationSecondes := Value / mediatimescale;
+end;
+
+procedure TfrmMain.SetWaitingListCount(const Value: nativeint);
+begin
+  lblWaitingListStatus.Text := 'Waiting count : ' + Value.tostring;
 end;
 
 procedure TfrmMain.SubscribeToProjectChangedMessage;
@@ -723,6 +820,7 @@ begin
       btnProjectNew.Visible := btnProjectOpen.Visible;
       btnProjectClose.Visible := not btnProjectOpen.Visible;
       btnProjectOptions.Visible := not btnProjectOpen.Visible;
+      btnProjectExport.Visible := not btnProjectOpen.Visible;
     end);
 end;
 

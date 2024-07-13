@@ -3,34 +3,76 @@ object frmMain: TfrmMain
   Top = 0
   Caption = 'Form1'
   ClientHeight = 480
-  ClientWidth = 772
+  ClientWidth = 900
   Position = ScreenCenter
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
   OnCreate = FormCreate
+  OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   DesignerMasterStyle = 0
   object StatusBar1: TStatusBar
     Position.Y = 458.000000000000000000
     ShowSizeGrip = True
-    Size.Width = 772.000000000000000000
+    Size.Width = 900.000000000000000000
     Size.Height = 22.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 2
-    object lblStatus: TLabel
+    object GridPanelLayout1: TGridPanelLayout
       Align = Client
-      Margins.Left = 5.000000000000000000
-      Margins.Right = 5.000000000000000000
-      Size.Width = 762.000000000000000000
+      Size.Width = 900.000000000000000000
       Size.Height = 22.000000000000000000
       Size.PlatformDefault = False
-      Text = 'lblStatus'
       TabOrder = 0
+      ColumnCollection = <
+        item
+          Value = 50.000000000000000000
+        end
+        item
+          Value = 50.000000000000000000
+        end>
+      ControlCollection = <
+        item
+          Column = 0
+          Control = lblStatus
+          Row = 0
+        end
+        item
+          Column = 1
+          Control = lblWaitingListStatus
+          Row = 0
+        end>
+      RowCollection = <
+        item
+          Value = 100.000000000000000000
+        end>
+      object lblStatus: TLabel
+        Align = Client
+        Anchors = []
+        Margins.Left = 5.000000000000000000
+        Margins.Right = 5.000000000000000000
+        Size.Width = 440.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'lblStatus'
+        TabOrder = 1
+      end
+      object lblWaitingListStatus: TLabel
+        Align = Client
+        Anchors = []
+        Margins.Left = 5.000000000000000000
+        Margins.Right = 5.000000000000000000
+        Size.Width = 440.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'lblStatus'
+        TabOrder = 0
+      end
     end
   end
   object ToolBar1: TToolBar
-    Size.Width = 772.000000000000000000
+    Size.Width = 900.000000000000000000
     Size.Height = 40.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 3
@@ -79,7 +121,7 @@ object frmMain: TfrmMain
       Size.Width = 80.000000000000000000
       Size.Height = 30.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 3
+      TabOrder = 4
       TextSettings.Trimming = None
     end
     object btnToolsOptions: TButton
@@ -90,12 +132,12 @@ object frmMain: TfrmMain
       Margins.Top = 5.000000000000000000
       Margins.Right = 5.000000000000000000
       Margins.Bottom = 5.000000000000000000
-      Position.X = 507.000000000000000000
+      Position.X = 635.000000000000000000
       Position.Y = 5.000000000000000000
       Size.Width = 80.000000000000000000
       Size.Height = 30.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 5
+      TabOrder = 6
       TextSettings.Trimming = None
     end
     object btnQuit: TButton
@@ -106,12 +148,12 @@ object frmMain: TfrmMain
       Margins.Top = 5.000000000000000000
       Margins.Right = 5.000000000000000000
       Margins.Bottom = 5.000000000000000000
-      Position.X = 687.000000000000000000
+      Position.X = 815.000000000000000000
       Position.Y = 5.000000000000000000
       Size.Width = 80.000000000000000000
       Size.Height = 30.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 6
+      TabOrder = 7
       TextSettings.Trimming = None
     end
     object btnAbout: TButton
@@ -122,12 +164,12 @@ object frmMain: TfrmMain
       Margins.Top = 5.000000000000000000
       Margins.Right = 5.000000000000000000
       Margins.Bottom = 5.000000000000000000
-      Position.X = 597.000000000000000000
+      Position.X = 725.000000000000000000
       Position.Y = 5.000000000000000000
       Size.Width = 80.000000000000000000
       Size.Height = 30.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 4
+      TabOrder = 5
       TextSettings.Trimming = None
     end
     object btnProjectNew: TButton
@@ -144,6 +186,29 @@ object frmMain: TfrmMain
       Size.Height = 30.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 0
+      TextSettings.Trimming = None
+    end
+    object AniIndicator1: TAniIndicator
+      Align = Right
+      Position.X = 580.000000000000000000
+      Size.Width = 50.000000000000000000
+      Size.Height = 40.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object btnProjectExport: TButton
+      Action = actProjectExport
+      Align = Left
+      ImageIndex = -1
+      Margins.Left = 5.000000000000000000
+      Margins.Top = 5.000000000000000000
+      Margins.Right = 5.000000000000000000
+      Margins.Bottom = 5.000000000000000000
+      Position.X = 365.000000000000000000
+      Position.Y = 5.000000000000000000
+      Size.Width = 80.000000000000000000
+      Size.Height = 30.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 3
       TextSettings.Trimming = None
     end
   end
@@ -185,6 +250,11 @@ object frmMain: TfrmMain
       Text = '&Project'
       object mnuProjectOptions: TMenuItem
         Action = actProjectOptions
+        Locked = True
+        ImageIndex = -1
+      end
+      object mnuProjectExport: TMenuItem
+        Action = actProjectExport
         Locked = True
         ImageIndex = -1
       end
@@ -231,14 +301,14 @@ object frmMain: TfrmMain
     Left = 520
     Top = 80
   end
-  object scExportedVideo: TSaveDialog
+  object sdExportedVideo: TSaveDialog
     DefaultExt = 'mp4'
     Filter = 'Video MP4 (*.mp4)|*.mp4'
     Options = [ofOverwritePrompt, ofHideReadOnly, ofPathMustExist, ofEnableSizing]
     Left = 624
     Top = 152
   end
-  object svVICUProject: TSaveDialog
+  object sdVICUProject: TSaveDialog
     DefaultExt = 'vicu'
     Filter = 'Video Cutter Project (*.vicu)|*.vicu'
     Options = [ofOverwritePrompt, ofHideReadOnly, ofPathMustExist, ofEnableSizing]
@@ -254,14 +324,14 @@ object frmMain: TfrmMain
   end
   object lProject: TLayout
     Align = Client
-    Size.Width = 772.000000000000000000
+    Size.Width = 900.000000000000000000
     Size.Height = 418.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 13
     object FlowLayout1: TFlowLayout
       Align = MostBottom
       Position.Y = 368.000000000000000000
-      Size.Width = 772.000000000000000000
+      Size.Width = 900.000000000000000000
       Size.Height = 50.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 2
@@ -273,7 +343,7 @@ object frmMain: TfrmMain
         Margins.Top = 5.000000000000000000
         Margins.Right = 5.000000000000000000
         Margins.Bottom = 5.000000000000000000
-        Position.X = 216.000000000000000000
+        Position.X = 280.000000000000000000
         Position.Y = 5.000000000000000000
         Size.Width = 40.000000000000000000
         Size.Height = 40.000000000000000000
@@ -305,7 +375,7 @@ object frmMain: TfrmMain
         Margins.Top = 5.000000000000000000
         Margins.Right = 5.000000000000000000
         Margins.Bottom = 5.000000000000000000
-        Position.X = 266.000000000000000000
+        Position.X = 330.000000000000000000
         Position.Y = 5.000000000000000000
         Size.Width = 40.000000000000000000
         Size.Height = 40.000000000000000000
@@ -339,7 +409,7 @@ object frmMain: TfrmMain
         Margins.Top = 5.000000000000000000
         Margins.Right = 5.000000000000000000
         Margins.Bottom = 5.000000000000000000
-        Position.X = 316.000000000000000000
+        Position.X = 380.000000000000000000
         Position.Y = 5.000000000000000000
         Size.Width = 40.000000000000000000
         Size.Height = 40.000000000000000000
@@ -376,7 +446,7 @@ object frmMain: TfrmMain
         Margins.Top = 5.000000000000000000
         Margins.Right = 5.000000000000000000
         Margins.Bottom = 5.000000000000000000
-        Position.X = 366.000000000000000000
+        Position.X = 430.000000000000000000
         Position.Y = 5.000000000000000000
         Size.Width = 40.000000000000000000
         Size.Height = 40.000000000000000000
@@ -424,7 +494,7 @@ object frmMain: TfrmMain
         Margins.Top = 5.000000000000000000
         Margins.Right = 5.000000000000000000
         Margins.Bottom = 5.000000000000000000
-        Position.X = 416.000000000000000000
+        Position.X = 480.000000000000000000
         Position.Y = 5.000000000000000000
         Size.Width = 40.000000000000000000
         Size.Height = 40.000000000000000000
@@ -461,7 +531,7 @@ object frmMain: TfrmMain
         Margins.Top = 5.000000000000000000
         Margins.Right = 5.000000000000000000
         Margins.Bottom = 5.000000000000000000
-        Position.X = 466.000000000000000000
+        Position.X = 530.000000000000000000
         Position.Y = 5.000000000000000000
         Size.Width = 40.000000000000000000
         Size.Height = 40.000000000000000000
@@ -495,7 +565,7 @@ object frmMain: TfrmMain
         Margins.Top = 5.000000000000000000
         Margins.Right = 5.000000000000000000
         Margins.Bottom = 5.000000000000000000
-        Position.X = 516.000000000000000000
+        Position.X = 580.000000000000000000
         Position.Y = 5.000000000000000000
         Size.Width = 40.000000000000000000
         Size.Height = 40.000000000000000000
@@ -524,7 +594,7 @@ object frmMain: TfrmMain
       end
     end
     object MediaPlayerControl1: TMediaPlayerControl
-      Size.Width = 572.000000000000000000
+      Size.Width = 700.000000000000000000
       Size.Height = 314.000000000000000000
       Size.PlatformDefault = False
       Align = Client
@@ -537,7 +607,7 @@ object frmMain: TfrmMain
         Align = Top
         Margins.Top = -20.000000000000000000
         Position.Y = -20.000000000000000000
-        Size.Width = 572.000000000000000000
+        Size.Width = 700.000000000000000000
         Size.Height = 17.000000000000000000
         Size.PlatformDefault = False
         TextSettings.HorzAlign = Center
@@ -555,7 +625,7 @@ object frmMain: TfrmMain
       Margins.Bottom = 5.000000000000000000
       Position.X = 5.000000000000000000
       Position.Y = 344.000000000000000000
-      Size.Width = 762.000000000000000000
+      Size.Width = 890.000000000000000000
       Size.Height = 19.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 4
@@ -563,7 +633,7 @@ object frmMain: TfrmMain
     end
     object lProjectRight: TLayout
       Align = Right
-      Position.X = 622.000000000000000000
+      Position.X = 750.000000000000000000
       Size.Width = 150.000000000000000000
       Size.Height = 339.000000000000000000
       Size.PlatformDefault = False
@@ -787,6 +857,10 @@ object frmMain: TfrmMain
     object actOptions: TAction
       Text = '&Options'
       OnExecute = actOptionsExecute
+    end
+    object actProjectExport: TAction
+      Text = 'E&xport'
+      OnExecute = actProjectExportExecute
     end
   end
 end
