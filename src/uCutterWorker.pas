@@ -1,0 +1,309 @@
+unit uCutterWorker;
+
+interface
+
+uses
+  System.Generics.Collections,
+  System.SysUtils,
+  System.Classes,
+  uProjectVICU;
+
+type
+  TCuttingWorker = class(TThread)
+  private
+    FWaitingList: TObjectQueue<TVICUProject>;
+    FOnWorkStart: TProc;
+    FOnWaitingListCountChange: TProc<Nativeint>;
+    FOnWorkEnd: TProc;
+    FonError: TProc<string>;
+    FonLog: TProc<string>;
+    procedure SetonError(const Value: TProc<string>);
+    procedure SetOnWaitingListCountChange(const Value: TProc<Nativeint>);
+    procedure SetOnWorkEnd(const Value: TProc);
+    procedure SetOnWorkStart(const Value: TProc);
+    procedure SetonLog(const Value: TProc<string>);
+  protected
+    function GetNextFromQueue: TVICUProject;
+    procedure Execute; override;
+    procedure AddLog(Text: string);
+    procedure AddError(Text: string);
+    procedure ExecuteFFmpegAndWait(const AParams, DestinationFilePath: string);
+  public
+    property OnWorkStart: TProc read FOnWorkStart write SetOnWorkStart;
+    property OnWorkEnd: TProc read FOnWorkEnd write SetOnWorkEnd;
+    property OnWaitingListCountChange: TProc<Nativeint>
+      read FOnWaitingListCountChange write SetOnWaitingListCountChange;
+    property onError: TProc<string> read FonError write SetonError;
+    property onLog: TProc<string> read FonLog write SetonLog;
+    procedure AddToQueue(const Project: TVICUProject);
+    constructor Create;
+    destructor Destroy; override;
+    procedure Stop;
+  end;
+
+implementation
+
+uses
+{$IF Defined(MACOS)}
+  Posix.Stdlib,
+{$ELSEIF Defined(MSWINDOWS)}
+  DosCommand,
+{$ENDIF}
+  System.IOUtils,
+  System.Types,
+  uConfig;
+
+procedure TCuttingWorker.AddError(Text: string);
+begin
+  if assigned(FonError) and (not Text.IsEmpty) then
+    TThread.Queue(nil,
+      procedure
+      begin
+        if assigned(FonError) then
+          FonError(Text);
+      end);
+end;
+
+procedure TCuttingWorker.AddLog(Text: string);
+begin
+  if assigned(FonLog) and (not Text.IsEmpty) then
+    TThread.Queue(nil,
+      procedure
+      begin
+        if assigned(FonLog) then
+          FonLog(Text);
+      end);
+end;
+
+procedure TCuttingWorker.AddToQueue(const Project: TVICUProject);
+var
+  Count: Nativeint;
+  s: string;
+begin
+  if not assigned(Project) then
+    exit;
+
+  System.TMonitor.Enter(FWaitingList);
+  try
+    FWaitingList.Enqueue(Project);
+    if assigned(FOnWaitingListCountChange) then
+    begin
+      Count := FWaitingList.Count;
+      TThread.Queue(nil,
+        procedure
+        begin
+          if assigned(FOnWaitingListCountChange) then
+            FOnWaitingListCountChange(Count);
+        end);
+    end;
+  finally
+    System.TMonitor.exit(FWaitingList);
+  end;
+end;
+
+constructor TCuttingWorker.Create;
+begin
+  inherited Create(true);
+  FreeOnTerminate := true;
+  FWaitingList := TObjectQueue<TVICUProject>.Create;
+  FOnWorkStart := nil;
+  FOnWaitingListCountChange := nil;
+  FOnWorkEnd := nil;
+  FonError := nil;
+  FonLog := nil;
+end;
+
+destructor TCuttingWorker.Destroy;
+begin
+  FWaitingList.free;
+  inherited;
+end;
+
+procedure TCuttingWorker.Execute;
+var
+  Project: TVICUProject;
+  cmd: string;
+  Tab: TArray<string>;
+  i: integer;
+  ToFileName, ToFilePath: string;
+  Counter: int64;
+  NbVideos: integer;
+begin
+  Counter := 0;
+  while not TThread.CheckTerminated do
+  begin
+//    Project := GetNextFromQueue;
+    project := nil;
+    if not assigned(Project) then
+      sleep(1000)
+    else
+      try
+      // TODO : à compléter
+//        Tab := Files.Split([Tabulator]);
+//        cmd := '';
+//        ToFileName := '';
+//        NbVideos := 0;
+//        for i := 0 to length(Tab) - 1 do
+//          if not Tab[i].IsEmpty then
+//            if tfile.exists(Tab[i]) then
+//            begin
+//              inc(NbVideos);
+//              cmd := cmd + ' -i "' + Tab[i] + '"';
+//              if ToFileName.IsEmpty then
+//                ToFileName :=
+//                  ExtractPartOf(tpath.GetFileNameWithoutExtension(Tab[i]))
+//              else
+//                ToFileName := ToFileName + '_' +
+//                  ExtractPartOf(tpath.GetFileNameWithoutExtension(Tab[i]));
+//            end
+//            else
+//            begin
+//              cmd := '';
+//              AddError('File not found "' + Tab[i] + '".');
+//              break;
+//            end;
+//        if (not cmd.IsEmpty) and (NbVideos > 1) then
+//        begin
+//          if assigned(FOnWorkStart) then
+//            TThread.Queue(nil,
+//              procedure
+//              begin
+//                if assigned(FOnWorkStart) then
+//                  FOnWorkStart;
+//              end);
+//          try
+//            cmd := cmd + ' -filter_complex "concat=n=' + NbVideos.tostring +
+//              ':v=1:a=1"';
+//            inc(Counter);
+//            ToFilePath := tpath.Combine(TConfig.MergeToPath,
+//              ToFileName + '-' + Counter.tostring + '.mp4');
+//{$IFDEF DEBUG}
+//            AddLog(cmd + ' "' + ToFilePath + '"');
+//{$ENDIF}
+//            ExecuteFFmpegAndWait(cmd, ToFilePath);
+//            AddLog(Files.Replace(Tabulator, ', ') + ' merged in ' + ToFilePath);
+//          finally
+//            if assigned(FOnWorkEnd) then
+//              TThread.Queue(nil,
+//                procedure
+//                begin
+//                  if assigned(FOnWorkEnd) then
+//                    FOnWorkEnd;
+//                end);
+//          end;
+//        end;
+      finally
+        Project.free;
+      end;
+  end;
+end;
+
+procedure TCuttingWorker.ExecuteFFmpegAndWait(const AParams,
+  DestinationFilePath: string);
+// procedure from "Le Temps D'Une Tomate" project
+// cf https://github.com/DeveloppeurPascal/LeTempsDUneTomate/blob/main/src/fMain.pas
+var
+  LParams: string;
+  cmd: string;
+{$IFDEF MSWINDOWS}
+  DosCommand: TDosCommand;
+{$ENDIF}
+begin
+  if tfile.exists(DestinationFilePath) then
+  begin
+    AddLog('File "' + DestinationFilePath + '" exist !');
+    exit;
+  end;
+
+{$IFDEF DEBUG}
+  LParams := '-y ' + AParams;
+{$ELSE}
+  LParams := '-y -loglevel error ' + AParams;
+{$ENDIF}
+  cmd := '"' + TConfig.FFmpegPath + '" ' + LParams + ' "' +
+    DestinationFilePath + '"';
+{$IFDEF DEBUG}
+  AddLog(cmd);
+{$ENDIF}
+{$IF Defined(MSWINDOWS)}
+  DosCommand := TDosCommand.Create(nil);
+  try
+    DosCommand.CommandLine := cmd;
+    DosCommand.InputToOutput := false;
+    try
+      DosCommand.Execute;
+    except
+    end;
+    while DosCommand.IsRunning and
+      (DosCommand.EndStatus = TEndStatus.esStill_Active) do
+      sleep(100);
+  finally
+    DosCommand.free;
+  end;
+{$ELSEIF Defined(MACOS)}
+  _system(PAnsiChar(ansistring(cmd)));
+{$ELSE}
+{$MESSAGE FATAL 'Platform not available.'}
+{$ENDIF}
+end;
+
+function TCuttingWorker.GetNextFromQueue: TVICUProject;
+var
+  Count: Nativeint;
+begin
+  System.TMonitor.Enter(FWaitingList);
+  try
+    Count := FWaitingList.Count;
+    if (Count > 0) then
+    begin
+      result := FWaitingList.Extract;
+      if assigned(FOnWaitingListCountChange) then
+      begin
+        Count := Count - 1;
+        TThread.Queue(nil,
+          procedure
+          begin
+            if assigned(FOnWaitingListCountChange) then
+              FOnWaitingListCountChange(Count);
+          end);
+      end;
+    end
+    else
+      result := nil;
+  finally
+    System.TMonitor.exit(FWaitingList);
+  end;
+end;
+
+procedure TCuttingWorker.SetonError(const Value: TProc<string>);
+begin
+  FonError := Value;
+end;
+
+procedure TCuttingWorker.SetonLog(const Value: TProc<string>);
+begin
+  FonLog := Value;
+end;
+
+procedure TCuttingWorker.SetOnWaitingListCountChange
+  (const Value: TProc<Nativeint>);
+begin
+  FOnWaitingListCountChange := Value;
+end;
+
+procedure TCuttingWorker.SetOnWorkEnd(const Value: TProc);
+begin
+  FOnWorkEnd := Value;
+end;
+
+procedure TCuttingWorker.SetOnWorkStart(const Value: TProc);
+begin
+  FOnWorkStart := Value;
+end;
+
+procedure TCuttingWorker.Stop;
+begin
+  terminate;
+end;
+
+end.
