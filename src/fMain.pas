@@ -534,7 +534,6 @@ procedure TfrmMain.InitVideoParts;
 var
   item: TMarkItem;
   Mark: TMark;
-  i: integer;
 begin
   lbVideoParts.clear;
 
@@ -691,7 +690,10 @@ begin
       msg: TVICUProjectHasChangedMessage;
     begin
       if M is TVICUProjectHasChangedMessage then
-        msg := M as TVICUProjectHasChangedMessage;
+        msg := M as TVICUProjectHasChangedMessage
+      else
+        raise exception.Create('Wrong message for subscription !');
+
       if msg.Value = CurrentProject then
         InitMainFormCaption;
 
@@ -736,21 +738,9 @@ begin
 end;
 
 constructor TMarkItem.Create(AOwner: TComponent);
-var
-  style: tfmxobject;
-  o: tfmxobject;
-  cb: TCheckBox;
 begin
   inherited;
   FMark := nil;
-
-  style := GetStyleObject;
-  if assigned(style) then
-  begin
-    o := style.FindStyleResource('check');
-    if assigned(o) and (o is TCheckBox) then
-      (o as TCheckBox).OnChange := CheckboxChange;
-  end;
 end;
 
 procedure TMarkItem.Delete(const AutoFree: Boolean);
