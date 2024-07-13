@@ -126,7 +126,7 @@ type
     procedure tbVolumeTracking(Sender: TObject);
     procedure btnRemoveMarkClick(Sender: TObject);
     procedure btnAddMarkClick(Sender: TObject);
-    procedure ListBoxItem1Click(Sender: TObject);
+    procedure lbVideoPartsChangeCheck(Sender: TObject);
   private
     FCurrentProject: TVICUProject;
     FVideoDuration: int64;
@@ -553,9 +553,10 @@ begin
   end;
 end;
 
-procedure TfrmMain.ListBoxItem1Click(Sender: TObject);
+procedure TfrmMain.lbVideoPartsChangeCheck(Sender: TObject);
 begin
-  ListBoxItem1.IsChecked := true;
+  if Sender is TMarkItem then
+    (Sender as TMarkItem).CheckboxChange(Sender);
 end;
 
 procedure TfrmMain.OlfAboutDialog1URLClick(const AURL: string);
@@ -734,7 +735,7 @@ end;
 
 procedure TMarkItem.CheckboxChange(Sender: TObject);
 begin
-  Mark.IsCut := not Mark.IsCut;
+  Mark.IsCut := not IsChecked;
 end;
 
 constructor TMarkItem.Create(AOwner: TComponent);

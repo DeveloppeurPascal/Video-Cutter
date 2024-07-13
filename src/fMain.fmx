@@ -576,18 +576,17 @@ object frmMain: TfrmMain
         Size.Height = 262.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 6
-        DisableFocusEffect = True
         DefaultItemStyles.ItemStyle = ''
         DefaultItemStyles.GroupHeaderStyle = ''
         DefaultItemStyles.GroupFooterStyle = ''
         ShowCheckboxes = True
         Sorted = True
+        OnChangeCheck = lbVideoPartsChangeCheck
         Viewport.Width = 136.000000000000000000
         Viewport.Height = 258.000000000000000000
         object ListBoxItem1: TListBoxItem
           TabOrder = 0
           Text = 'ListBoxItem1'
-          OnClick = ListBoxItem1Click
         end
       end
       object lblVideosParts: TLabel
