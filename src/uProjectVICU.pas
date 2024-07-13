@@ -233,9 +233,9 @@ begin
     end;
   if (not assigned(result)) and CreateIfNotExists then
   begin
-    Mark := TMark.Create(FProject);
-    Mark.FTime := ATime;
-    Add(Mark);
+    result := TMark.Create(FProject);
+    result.FTime := ATime;
+    Add(result);
   end;
 end;
 
