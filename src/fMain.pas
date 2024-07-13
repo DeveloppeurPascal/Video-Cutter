@@ -100,6 +100,9 @@ type
     btnRemoveMark: TButton;
     pRemoveMark: TPath;
     ListBoxItem1: TListBoxItem;
+    Layout1: TLayout;
+    lblVol0: TLabel;
+    lblVol100: TLabel;
     procedure actQuitExecute(Sender: TObject);
     procedure actAboutExecute(Sender: TObject);
     procedure actProjectOpenExecute(Sender: TObject);
