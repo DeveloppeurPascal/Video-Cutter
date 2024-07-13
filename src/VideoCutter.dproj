@@ -406,6 +406,7 @@
             <FormType>fmx</FormType>
         </DCCReference>
         <DCCReference Include="uTools.pas"/>
+        <DCCReference Include="uCutterWorker.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

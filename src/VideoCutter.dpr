@@ -18,7 +18,8 @@ uses
   Olf.RTL.Maths.Conversions in '..\lib-externes\librairies\src\Olf.RTL.Maths.Conversions.pas',
   Olf.FMX.SelectDirectory in '..\lib-externes\Delphi-FMXExtend-Library\src\Olf.FMX.SelectDirectory.pas',
   fOptions in 'fOptions.pas' {frmOptions},
-  uTools in 'uTools.pas';
+  uTools in 'uTools.pas',
+  uCutterWorker in 'uCutterWorker.pas';
 
 {$R *.res}
 
