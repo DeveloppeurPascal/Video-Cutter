@@ -127,6 +127,8 @@ type
     procedure btnRemoveMarkClick(Sender: TObject);
     procedure btnAddMarkClick(Sender: TObject);
     procedure lbVideoPartsChangeCheck(Sender: TObject);
+    procedure lbVideoPartsItemClick(const Sender: TCustomListBox;
+      const Item: TListBoxItem);
   private
     FCurrentProject: TVICUProject;
     FVideoDuration: int64;
@@ -532,7 +534,7 @@ end;
 
 procedure TfrmMain.InitVideoParts;
 var
-  item: TMarkItem;
+  Item: TMarkItem;
   Mark: TMark;
 begin
   lbVideoParts.clear;
@@ -544,9 +546,9 @@ begin
   try
     for Mark in CurrentProject.Marks do
     begin
-      item := TMarkItem.Create(self);
-      item.Mark := Mark;
-      lbVideoParts.AddObject(item);
+      Item := TMarkItem.Create(self);
+      Item.Mark := Mark;
+      lbVideoParts.AddObject(Item);
     end;
   finally
     lbVideoParts.EndUpdate;
@@ -557,6 +559,13 @@ procedure TfrmMain.lbVideoPartsChangeCheck(Sender: TObject);
 begin
   if Sender is TMarkItem then
     (Sender as TMarkItem).CheckboxChange(Sender);
+end;
+
+procedure TfrmMain.lbVideoPartsItemClick(const Sender: TCustomListBox;
+const Item: TListBoxItem);
+begin
+  if (Item is TMarkItem) then
+    CurrentTime := (Item as TMarkItem).Mark.Time;
 end;
 
 procedure TfrmMain.OlfAboutDialog1URLClick(const AURL: string);

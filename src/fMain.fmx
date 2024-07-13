@@ -582,6 +582,7 @@ object frmMain: TfrmMain
         ShowCheckboxes = True
         Sorted = True
         OnChangeCheck = lbVideoPartsChangeCheck
+        OnItemClick = lbVideoPartsItemClick
         Viewport.Width = 136.000000000000000000
         Viewport.Height = 258.000000000000000000
         object ListBoxItem1: TListBoxItem
