@@ -266,8 +266,12 @@ begin
     sdExportedVideo.FileName := CurrentProject.ExportedVideoFilePath;
 {$ENDIF}
   end
-  else if sdExportedVideo.InitialDir.IsEmpty then
-    sdExportedVideo.InitialDir := tconfig.DefaultExportFolder;
+  else
+  begin
+    if sdExportedVideo.InitialDir.IsEmpty then
+      sdExportedVideo.InitialDir := tconfig.DefaultExportFolder;
+    sdExportedVideo.FileName := CurrentProject.FileName + '-export.mp4';
+  end;
 
   if sdExportedVideo.Execute and (sdExportedVideo.FileName <> '') then
   begin
