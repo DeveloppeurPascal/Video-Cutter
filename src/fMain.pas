@@ -383,7 +383,9 @@ end;
 
 procedure TfrmMain.AddLog(const Text: string);
 begin
-  // TODO : à compléter
+{$IFDEF DEBUG}
+  ShowMessage(Text);
+{$ENDIF}
 end;
 
 procedure TfrmMain.AddMark(const ATime: int64);
@@ -402,6 +404,11 @@ begin
       Mark.IsCut := FCurrentProject.Marks.GetPreviousMark(ATime).IsCut;
       MarkItem := TMarkItem.Create(self);
       MarkItem.Mark := Mark;
+{$REGION 'RSS-1355 temporary patch'}
+      // TODO : temporary patch to remove when the bug will be fixed
+      // https://embt.atlassian.net/servicedesk/customer/portal/1/RSS-1355
+      lbVideoParts.ItemIndex := -1;
+{$ENDREGION}
       lbVideoParts.AddObject(MarkItem);
     end;
   end;
