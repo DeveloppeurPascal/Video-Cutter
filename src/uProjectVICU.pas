@@ -342,6 +342,8 @@ begin
     finally
       ms.free;
     end;
+    result.FFilePath := FFilePath;
+    result.FHasChanged := false;
   finally
     FIsCloning := false;
   end;
