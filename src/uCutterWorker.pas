@@ -51,7 +51,10 @@ uses
 {$ENDIF}
   System.IOUtils,
   System.Types,
-  uConfig;
+  FMX.Media,
+  System.Generics.Defaults,
+  uConfig,
+  uTools;
 
 procedure TCuttingWorker.AddError(Text: string);
 begin
@@ -78,7 +81,6 @@ end;
 procedure TCuttingWorker.AddToQueue(const Project: TVICUProject);
 var
   Count: Nativeint;
-  s: string;
 begin
   if not assigned(Project) then
     exit;
@@ -123,75 +125,88 @@ procedure TCuttingWorker.Execute;
 var
   Project: TVICUProject;
   cmd: string;
-  Tab: TArray<string>;
   i: integer;
-  ToFileName, ToFilePath: string;
-  Counter: int64;
-  NbVideos: integer;
+  NbParts: integer;
+  Mark: TMark;
+  TimeList: TList<int64>;
+  PrecIsCut: boolean;
 begin
-  Counter := 0;
   while not TThread.CheckTerminated do
   begin
-//    Project := GetNextFromQueue;
-    project := nil;
+    Project := GetNextFromQueue;
     if not assigned(Project) then
       sleep(1000)
     else
       try
-      // TODO : à compléter
-//        Tab := Files.Split([Tabulator]);
-//        cmd := '';
-//        ToFileName := '';
-//        NbVideos := 0;
-//        for i := 0 to length(Tab) - 1 do
-//          if not Tab[i].IsEmpty then
-//            if tfile.exists(Tab[i]) then
-//            begin
-//              inc(NbVideos);
-//              cmd := cmd + ' -i "' + Tab[i] + '"';
-//              if ToFileName.IsEmpty then
-//                ToFileName :=
-//                  ExtractPartOf(tpath.GetFileNameWithoutExtension(Tab[i]))
-//              else
-//                ToFileName := ToFileName + '_' +
-//                  ExtractPartOf(tpath.GetFileNameWithoutExtension(Tab[i]));
-//            end
-//            else
-//            begin
-//              cmd := '';
-//              AddError('File not found "' + Tab[i] + '".');
-//              break;
-//            end;
-//        if (not cmd.IsEmpty) and (NbVideos > 1) then
-//        begin
-//          if assigned(FOnWorkStart) then
-//            TThread.Queue(nil,
-//              procedure
-//              begin
-//                if assigned(FOnWorkStart) then
-//                  FOnWorkStart;
-//              end);
-//          try
-//            cmd := cmd + ' -filter_complex "concat=n=' + NbVideos.tostring +
-//              ':v=1:a=1"';
-//            inc(Counter);
-//            ToFilePath := tpath.Combine(TConfig.MergeToPath,
-//              ToFileName + '-' + Counter.tostring + '.mp4');
-//{$IFDEF DEBUG}
-//            AddLog(cmd + ' "' + ToFilePath + '"');
-//{$ENDIF}
-//            ExecuteFFmpegAndWait(cmd, ToFilePath);
-//            AddLog(Files.Replace(Tabulator, ', ') + ' merged in ' + ToFilePath);
-//          finally
-//            if assigned(FOnWorkEnd) then
-//              TThread.Queue(nil,
-//                procedure
-//                begin
-//                  if assigned(FOnWorkEnd) then
-//                    FOnWorkEnd;
-//                end);
-//          end;
-//        end;
+        TimeList := TList<int64>.Create;
+        try
+          for Mark in Project.Marks do
+            TimeList.Add(Mark.Time);
+
+          TimeList.Sort(TComparer<int64>.Construct(
+            function(const Left, Right: int64): integer
+            begin
+              if Left < Right then
+                result := -1
+              else if Left > Right then
+                result := 1
+              else
+                result := 0;
+            end));
+
+          NbParts := 0;
+          cmd := '';
+          PrecIsCut := true;
+          for i := 0 to TimeList.Count - 1 do
+          begin
+            Mark := Project.Marks.GetMark(TimeList[i], false);
+            if (not Mark.IsCut) and PrecIsCut then
+            begin
+              PrecIsCut := false;
+              inc(NbParts);
+              // Start of the block
+              cmd := cmd + ' -ss ' + SecondesToHHMMSS
+                (Mark.Time / MediaTimeScale).Replace(',', '.');
+              // End of the block
+              while assigned(Mark) and (not Mark.IsCut) do
+                Mark := Project.Marks.GetNextMark(Mark.Time);
+              if assigned(Mark) then
+                cmd := cmd + ' -to ' + SecondesToHHMMSS
+                  (Mark.Time / MediaTimeScale).Replace(',', '.');
+              // Video source file path
+              cmd := cmd + ' -i "' + Project.SourceVideoFilePath + '"';
+            end
+            else
+              PrecIsCut := true;
+          end;
+        finally
+          TimeList.free;
+        end;
+
+        if (not cmd.IsEmpty) then
+        begin
+          if assigned(FOnWorkStart) then
+            TThread.Queue(nil,
+              procedure
+              begin
+                if assigned(FOnWorkStart) then
+                  FOnWorkStart;
+              end);
+          try
+            cmd := cmd + ' -filter_complex "concat=n=' + NbParts.tostring +
+              ':v=1:a=1"';
+            ExecuteFFmpegAndWait(cmd, Project.ExportedVideoFilePath);
+            AddLog('Export for "' + Project.FileName + '" finished.');
+          finally
+            if assigned(FOnWorkEnd) then
+              TThread.Queue(nil,
+                procedure
+                begin
+                  if assigned(FOnWorkEnd) then
+                    FOnWorkEnd;
+                end);
+          end;
+        end;
       finally
         Project.free;
       end;
@@ -209,12 +224,6 @@ var
   DosCommand: TDosCommand;
 {$ENDIF}
 begin
-  if tfile.exists(DestinationFilePath) then
-  begin
-    AddLog('File "' + DestinationFilePath + '" exist !');
-    exit;
-  end;
-
 {$IFDEF DEBUG}
   LParams := '-y ' + AParams;
 {$ELSE}
