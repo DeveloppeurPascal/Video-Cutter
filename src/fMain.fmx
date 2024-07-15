@@ -278,8 +278,8 @@ object frmMain: TfrmMain
   end
   object OlfAboutDialog1: TOlfAboutDialog
     Titre = 'Video Cutter'
-    VersionNumero = '0.0'
-    VersionDate = '20240704'
+    VersionNumero = '1.0b'
+    VersionDate = '20240715'
     MultiResBitmap = <
       item
       end>
@@ -646,6 +646,7 @@ object frmMain: TfrmMain
         Size.Height = 262.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 6
+        DisableFocusEffect = True
         DefaultItemStyles.ItemStyle = ''
         DefaultItemStyles.GroupHeaderStyle = ''
         DefaultItemStyles.GroupFooterStyle = ''
