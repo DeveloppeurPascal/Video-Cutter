@@ -364,6 +364,9 @@ begin
     if sdVICUProject.InitialDir.IsEmpty then
       sdVICUProject.InitialDir := tconfig.DefaultProjectFolder;
 
+    sdVICUProject.FileName := TPath.GetFileNameWithoutExtension
+      (CurrentProject.SourceVideoFilePath) + '.vicu';
+
     if sdVICUProject.Execute and (sdVICUProject.FileName <> '') then
       CurrentProject.SaveToFile(sdVICUProject.FileName);
   end;
