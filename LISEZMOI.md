@@ -12,11 +12,11 @@ Ce logiciel est disponible dans une version de production directement installabl
 
 Vous pouvez le télécharger et le rediffuser gratuitement à condition de ne pas en modifier le contenu (installeur, programme, fichiers annexes, ...).
 
-[Télécharger le programme ou son installeur](https://olfsoftware.lemonsqueezy.com/buy/22351c7a-db5f-4835-8b09-532d5d397f80) (WIP)
+[Télécharger le programme ou son installeur](https://olfsoftware.lemonsqueezy.com/buy/22351c7a-db5f-4835-8b09-532d5d397f80)
 
 Si vous utilisez régulièrement ce logiciel et en êtes satisfait vous êtes invité à en acheter une licence d'utilisateur final. L'achat d'une licence vous donnera accès aux mises à jour du logiciel en plus d'activer d'évenuelles fonctionnalités optionnelles.
 
-[Acheter une licence](https://olfsoftware.lemonsqueezy.com/buy/0674f191-d92e-499a-b41d-52195d3f32a1) (WIP)
+[Acheter une licence](https://olfsoftware.lemonsqueezy.com/buy/0674f191-d92e-499a-b41d-52195d3f32a1)
 
 Vous pouvez aussi [consulter le site du logiciel](https://videocutter.olfsoftware.fr/) pour en savoir plus sur son fonctionnement, accéder à des vidéos et articles, connaître les différentes versions disponibles et leurs fonctionnalités, contacter le support utilisateurs...
 

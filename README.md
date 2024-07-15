@@ -12,11 +12,11 @@ This software is available in a directly installable or executable production ve
 
 You can download and redistribute it free of charge, provided you do not modify its content (installer, program, additional files, etc.).
 
-[Download program or installer](https://olfsoftware.lemonsqueezy.com/buy/22351c7a-db5f-4835-8b09-532d5d397f80) (WIP)
+[Download program or installer](https://olfsoftware.lemonsqueezy.com/buy/22351c7a-db5f-4835-8b09-532d5d397f80)
 
 If you use this software regularly and are satisfied with it, you are invited to purchase an end-user license. Purchasing a license will give you access to software updates, as well as enabling optional features.
 
-[Buy a license](https://olfsoftware.lemonsqueezy.com/buy/0674f191-d92e-499a-b41d-52195d3f32a1) (WIP)
+[Buy a license](https://olfsoftware.lemonsqueezy.com/buy/0674f191-d92e-499a-b41d-52195d3f32a1)
 
 You can also [visit the software website](https://videocutter.olfsoftware.fr/) to find out more about how it works, access videos and articles, find out about the different versions available and their features, contact user support...
 
