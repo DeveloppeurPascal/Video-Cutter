@@ -8,3 +8,5 @@
 * patch temporaire à RSS-1355 (problème d'affichage de la sélection dans une TListBox FMX)
 * correction du clonage d'un projet qui oubliait le chemin et nom du projet (utilisé lors de l'export pour confirmer la finalisation)
 * released version 1.0b - 20240715
+
+* mise à jour des docs (FR/EN)
