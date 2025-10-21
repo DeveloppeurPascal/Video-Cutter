@@ -1,3 +1,35 @@
+﻿(* C2PP
+  ***************************************************************************
+
+  Video Cutter
+
+  Copyright 2024-2025 Patrick PREMARTIN under AGPL 3.0 license.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+  THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+  DEALINGS IN THE SOFTWARE.
+
+  ***************************************************************************
+
+  Author(s) :
+  Patrick PREMARTIN
+
+  Site :
+  https://videocutter.olfsoftware.fr
+
+  Project site :
+  https://github.com/DeveloppeurPascal/Video-Cutter
+
+  ***************************************************************************
+  File last update : 2025-10-16T10:43:11.763+02:00
+  Signature : dcaaa16b2d387682f605ea50b1e940f43e826487
+  ***************************************************************************
+*)
+
 program VideoCutter;
 
 uses
